@@ -1,0 +1,86 @@
+{
+    "QueryInitialCheck": {
+        "SYSTEM_PROMPT_TEMPLATES": {
+            "structured": "You are a helpful assistant",
+            "unstructured": "You are a helpful assistant that outputs strictly in valid JSON format. Your response must follow this schema: { \"dataset\": \"string\", \"metadate\": [{ \"metadata1\": integer, \"metadata2\": \"string\" }] } Do not include any markdown formatting, code blocks, or text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
+        },
+        "PROMPT_TEMPLATES": {
+            "InstructionBased": "Summarize the following in 3 bullet points, The summarization should perfectly include user needs and expand central keywords: {input}",
+            "FewShot": "Extract the user duration of podcast and subject. Examples: {should add examples} \n Now Extract: {input}",
+            "ChainOfThoughts": "For this user input {input}, First identify the relevant kind of content it wants, episode, or a podcast show, then understand what duration it needs to be.",
+            "PersonaPattern": "You are a professional summarizer and best at extracting the person's needs: {input}",
+            "AudiencePattern": "Generate a response to the user as if they were looking for a podcast and in a style that fits their language: {input}",
+            "QuestionRefinementPattern": "In this chat use the Question Refinement Pattern: {input}"
+        }
+    },
+    "UserProcessing": {
+        "SYSTEM_PROMPT_TEMPLATES": {
+            "structured": "You are a helpful assistant",
+            "unstructured": "You are a helpful assistant that outputs strictly in valid JSON format. Your response must follow this schema: { \"dataset\": \"string\", \"metadate\": [{ \"metadata1\": integer, \"metadata2\": \"string\" }] } Do not include any markdown formatting, code blocks, or text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
+        },
+        "PROMPT_TEMPLATES": {
+            "InstructionBased": "Summarize the following in 3 bullet points, The summarization should perfectly include user needs and expand central keywords: {input}",
+            "FewShot": "Extract the user duration of podcast and subject. Examples: {should add examples} \n Now Extract: {input}",
+            "ChainOfThoughts": "For this user input {input}, First identify the relevant kind of content it wants, episode, or a podcast show, then understand what duration it needs to be.",
+            "PersonaPattern": "You are a professional summarizer and best at extracting the person's needs: {input}",
+            "AudiencePattern": "Generate a response to the user as if they were looking for a podcast and in a style that fits their language: {input}",
+            "QuestionRefinementPattern": "In this chat use the Question Refinement Pattern: {input}"
+        }
+    },
+    "SearchFilters": {
+        "SYSTEM_PROMPT_TEMPLATES": {
+            "structured": "You are a helpful assistant",
+            "unstructured": "You are a helpful assistant that outputs strictly in valid JSON format. Your response must follow this schema: { \"dataset\": \"string\", \"metadate\": [{ \"metadata1\": integer, \"metadata2\": \"string\" }] } Do not include any markdown formatting, code blocks, or text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
+        },
+        "PROMPT_TEMPLATES": {
+            "InstructionBased": "Summarize the following in 3 bullet points, The summarization should perfectly include user needs and expand central keywords: {input}",
+            "FewShot": "Extract the user duration of podcast and subject. Examples: {should add examples} \n Now Extract: {input}",
+            "ChainOfThoughts": "For this user input {input}, First identify the relevant kind of content it wants, episode, or a podcast show, then understand what duration it needs to be.",
+            "PersonaPattern": "You are a professional summarizer and best at extracting the person's needs: {input}",
+            "AudiencePattern": "Generate a response to the user as if they were looking for a podcast and in a style that fits their language: {input}",
+            "QuestionRefinementPattern": "In this chat use the Question Refinement Pattern: {input}"
+        }
+    },
+    "NeedUnderstanding": {
+        "SYSTEM_PROMPT_TEMPLATES": {
+            "structured": "You are a helpful assistant",
+            "unstructured": "You are a helpful assistant that outputs strictly in valid JSON format. Your response must follow this schema: { \"dataset\": \"string\", \"metadate\": [{ \"metadata1\": integer, \"metadata2\": \"string\" }] } Do not include any markdown formatting, code blocks, or text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
+        },
+        "PROMPT_TEMPLATES": {
+            "InstructionBased": "Summarize the following in 3 bullet points, The summarization should perfectly include user needs and expand central keywords: {input}",
+            "FewShot": "Extract the user duration of podcast and subject. Examples: {should add examples} \n Now Extract: {input}",
+            "ChainOfThoughts": "For this user input {input}, First identify the relevant kind of content it wants, episode, or a podcast show, then understand what duration it needs to be.",
+            "PersonaPattern": "You are a professional summarizer and best at extracting the person's needs: {input}",
+            "AudiencePattern": "Generate a response to the user as if they were looking for a podcast and in a style that fits their language: {input}",
+            "QuestionRefinementPattern": "In this chat use the Question Refinement Pattern: {input}"
+        }
+    },
+    "ResponseGeneration": {
+        "SYSTEM_PROMPT_TEMPLATES": {
+            "structured": "You are a helpful assistant",
+            "unstructured": "You are a helpful assistant that outputs strictly in valid JSON format. Your response must follow this schema: { \"dataset\": \"string\", \"metadate\": [{ \"metadata1\": integer, \"metadata2\": \"string\" }] } Do not include any markdown formatting, code blocks, or text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
+        },
+        "PROMPT_TEMPLATES": {
+            "InstructionBased": "Summarize the following in 3 bullet points, The summarization should perfectly include user needs and expand central keywords: {input}",
+            "FewShot": "Extract the user duration of podcast and subject. Examples: {should add examples} \n Now Extract: {input}",
+            "ChainOfThoughts": "For this user input {input}, First identify the relevant kind of content it wants, episode, or a podcast show, then understand what duration it needs to be.",
+            "PersonaPattern": "You are a professional summarizer and best at extracting the person's needs: {input}",
+            "AudiencePattern": "Generate a response to the user as if they were looking for a podcast and in a style that fits their language: {input}",
+            "QuestionRefinementPattern": "In this chat use the Question Refinement Pattern: {input}"
+        }
+    },
+    "Supervision": {
+        "SYSTEM_PROMPT_TEMPLATES": {
+            "structured": "You are a helpful assistant",
+            "unstructured": "You are a helpful assistant that outputs strictly in valid JSON format. Your response must follow this schema: { \"dataset\": \"string\", \"metadate\": [{ \"metadata1\": integer, \"metadata2\": \"string\" }] } Do not include any markdown formatting, code blocks, or text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
+        },
+        "PROMPT_TEMPLATES": {
+            "InstructionBased": "Summarize the following in 3 bullet points, The summarization should perfectly include user needs and expand central keywords: {input}",
+            "FewShot": "Extract the user duration of podcast and subject. Examples: {should add examples} \n Now Extract: {input}",
+            "ChainOfThoughts": "For this user input {input}, First identify the relevant kind of content it wants, episode, or a podcast show, then understand what duration it needs to be.",
+            "PersonaPattern": "You are a professional summarizer and best at extracting the person's needs: {input}",
+            "AudiencePattern": "Generate a response to the user as if they were looking for a podcast and in a style that fits their language: {input}",
+            "QuestionRefinementPattern": "In this chat use the Question Refinement Pattern: {input}"
+        }
+    }
+}
