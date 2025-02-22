@@ -91,7 +91,9 @@ def run_pipeline(index, dataset, embedding_model, user_prompt):
          
 
 if __name__ == "__main__":
-    user_prompt = "Find me top Data Science podcasts."
+    # user_prompt = "Find me top Data Science podcasts."
+    # user_prompt = "I really want to here about RAG"
+    user_prompt = "Give me 54 optional podcasts episodes that talked about llms"
     # index, dataset, embedding_model = initialize_index()
     # run_pipeline(index, dataset, embedding_model, user_prompt)
 
