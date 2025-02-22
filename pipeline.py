@@ -38,9 +38,7 @@ class AgenticPipeline:
 
     def _initialize_agents(self):
         """Initializes all agents using the pre-defined templates from agent_templates.json."""
-        with open("agent_templates.json", "r") as file:
-            agents_data = json.load(file)
-        
+
         self.agents = {
             "QueryInitialCheck": Agent("QueryInitialCheck", self.model, "structured", "QuestionRefinementPattern"), # or "InstructionBased"
             #"UserProcessing": Agent("UserProcessing", self.model, "structured", "InstructionBased"), #is redundent, Adi also say that
@@ -106,17 +104,17 @@ def initialize_index():
     """
     Initialize the Pinecone index for the podcast dataset.
     """
+    index, dataset, model = database.init_database()
+    return index, dataset, model
+
+def run_pipeline(index, dataset, model, user_prompt):    
+    # Initialize and execute the pipeline
+    pipeline = AgenticPipeline(index, dataset, model)
+    final_output = pipeline.execute(user_prompt)
+    print("Final Output:", final_output)
          
 
 if __name__ == "__main__":
-    # Define dataset paths
-    data_episodes_path = "data/episodes.csv"
-    data_podcasts_path = "data/podcasts.csv"
-
-    index, dataset, embedding_model = database.init_database()
-    
-    # Initialize and execute the pipeline
-    pipeline = AgenticPipeline(data_episodes_path, data_podcasts_path)
     user_prompt = "Find me top Data Science podcasts."
-    final_output = pipeline.execute(user_prompt)
-    print("Final Output:", final_output)
+    index, dataset, model = initialize_index()
+    run_pipeline(index, dataset, model, user_prompt)

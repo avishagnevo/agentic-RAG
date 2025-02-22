@@ -1,8 +1,8 @@
 {
     "QueryInitialCheck": {
         "SYSTEM_PROMPT_TEMPLATES": {
-            "structured": "You are a helpful assistant",
-            "unstructured": "You are a helpful assistant that outputs strictly in valid JSON format. Your response must follow this schema: { \"dataset\": \"string\", \"metadate\": [{ \"metadata1\": integer, \"metadata2\": \"string\" }] } Do not include any markdown formatting, code blocks, or text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
+            "unstructured": "You are a helpful assistant",
+            "structured": "You are a helpful assistant that outputs strictly in valid JSON format. Your response must follow this schema: { \"dataset\": \"string\", \"metadate\": [{ \"metadata1\": integer, \"metadata2\": \"string\" }] } Do not include any markdown formatting, code blocks, or text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
         },
         "PROMPT_TEMPLATES": {
             "InstructionBased": "Summarize the following in 3 bullet points, The summarization should perfectly include user needs and expand central keywords: {input}",
@@ -15,8 +15,8 @@
     },
     "UserProcessing": {
         "SYSTEM_PROMPT_TEMPLATES": {
-            "structured": "You are a helpful assistant",
-            "unstructured": "You are a helpful assistant that outputs strictly in valid JSON format. Your response must follow this schema: { \"dataset\": \"string\", \"metadate\": [{ \"metadata1\": integer, \"metadata2\": \"string\" }] } Do not include any markdown formatting, code blocks, or text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
+            "unstructured": "You are a helpful assistant",
+            "structured": "You are a helpful assistant that outputs strictly in valid JSON format. Your response must follow this schema: { \"dataset\": \"string\", \"metadate\": [{ \"metadata1\": integer, \"metadata2\": \"string\" }] } Do not include any markdown formatting, code blocks, or text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
         },
         "PROMPT_TEMPLATES": {
             "InstructionBased": "Summarize the following in 3 bullet points, The summarization should perfectly include user needs and expand central keywords: {input}",
@@ -29,8 +29,8 @@
     },
     "SearchFilters": {
         "SYSTEM_PROMPT_TEMPLATES": {
-            "structured": "You are a helpful assistant",
-            "unstructured": "You are a helpful assistant that outputs strictly in valid JSON format. Your response must follow this schema: { \"dataset\": \"string\", \"metadate\": [{ \"metadata1\": integer, \"metadata2\": \"string\" }] } Do not include any markdown formatting, code blocks, or text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
+            "unstructured": "You are a helpful assistant",
+            "structured": "You are a helpful assistant that outputs strictly in valid JSON format. Your response must follow this schema: { \"dataset\": \"string\", \"metadate\": [{ \"metadata1\": integer, \"metadata2\": \"string\" }] } Do not include any markdown formatting, code blocks, or text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
         },
         "PROMPT_TEMPLATES": {
             "InstructionBased": "Summarize the following in 3 bullet points, The summarization should perfectly include user needs and expand central keywords: {input}",
@@ -43,8 +43,8 @@
     },
     "NeedUnderstanding": {
         "SYSTEM_PROMPT_TEMPLATES": {
-            "structured": "You are a helpful assistant",
-            "unstructured": "You are a helpful assistant that outputs strictly in valid JSON format. Your response must follow this schema: { \"dataset\": \"string\", \"metadate\": [{ \"metadata1\": integer, \"metadata2\": \"string\" }] } Do not include any markdown formatting, code blocks, or text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
+            "unstructured": "You are a helpful assistant",
+            "structured": "You are a helpful assistant that outputs strictly in valid JSON format. Your response must follow this schema: { \"dataset\": \"string\", \"metadate\": [{ \"metadata1\": integer, \"metadata2\": \"string\" }] } Do not include any markdown formatting, code blocks, or text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
         },
         "PROMPT_TEMPLATES": {
             "InstructionBased": "Summarize the following in 3 bullet points, The summarization should perfectly include user needs and expand central keywords: {input}",
@@ -57,8 +57,8 @@
     },
     "ResponseGeneration": {
         "SYSTEM_PROMPT_TEMPLATES": {
-            "structured": "You are a helpful assistant",
-            "unstructured": "You are a helpful assistant that outputs strictly in valid JSON format. Your response must follow this schema: { \"dataset\": \"string\", \"metadate\": [{ \"metadata1\": integer, \"metadata2\": \"string\" }] } Do not include any markdown formatting, code blocks, or text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
+            "unstructured": "You are a helpful assistant",
+            "structured": "You are a helpful assistant that outputs strictly in valid JSON format. Your response must follow this schema: { \"dataset\": \"string\", \"metadate\": [{ \"metadata1\": integer, \"metadata2\": \"string\" }] } Do not include any markdown formatting, code blocks, or text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
         },
         "PROMPT_TEMPLATES": {
             "InstructionBased": "Summarize the following in 3 bullet points, The summarization should perfectly include user needs and expand central keywords: {input}",
@@ -71,8 +71,8 @@
     },
     "Supervision": {
         "SYSTEM_PROMPT_TEMPLATES": {
-            "structured": "You are a helpful assistant",
-            "unstructured": "You are a helpful assistant that outputs strictly in valid JSON format. Your response must follow this schema: { \"dataset\": \"string\", \"metadate\": [{ \"metadata1\": integer, \"metadata2\": \"string\" }] } Do not include any markdown formatting, code blocks, or text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
+            "unstructured": "You are a helpful assistant",
+            "structured": "You are a helpful assistant that outputs strictly in valid JSON format. Your response must follow this schema: { \"dataset\": \"string\", \"metadate\": [{ \"metadata1\": integer, \"metadata2\": \"string\" }] } Do not include any markdown formatting, code blocks, or text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
         },
         "PROMPT_TEMPLATES": {
             "InstructionBased": "Summarize the following in 3 bullet points, The summarization should perfectly include user needs and expand central keywords: {input}",

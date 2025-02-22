@@ -38,7 +38,7 @@ class Agent:
         self.AGENT_NAMES = agents_data.keys()  # Should print all agent names
 
         if name not in self.AGENT_NAMES:
-            raise ValueError(f"Invalid agent type. Choose from {AGENT_NAMES}")
+            raise ValueError(f"Invalid agent type. Choose from {self.AGENT_NAMES}")
 
         self.SYSTEM_PROMPT_TEMPLATES = agents_data[name]["SYSTEM_PROMPT_TEMPLATES"]
 
@@ -53,13 +53,12 @@ class Agent:
         self.name = name
         self.model = AzureOpenAIModels().chat_model
         self.system_prompt_template = system_prompt_template
-        self.prompt_template = prompt_template
-        self.prompt_template = ChatPromptTemplate.from_template(self.PROMPT_TEMPLATES[prompt_type])
-        self.instruction_prompt = agents_data[name]["PROMPT_TEMPLATES"][prompt_template]
+        self.prompt_template = ChatPromptTemplate.from_template(self.PROMPT_TEMPLATES[prompt_template])
+        self.instruction_prompt = agents_data[name]["PROMPT_TEMPLATES"][self.prompt_template]
 
     def run(self, input_data):
         """Executes the agent with the given input and returns structured output."""
         formatted_prompt = self.instruction_prompt.format(input=input_data) #get the user input into a chosen tamplate
-        agent_output = self.model.get_chat_response(self.system_content, formatted_prompt)
+        agent_output = self.model.get_chat_response(self.system_prompt_template, formatted_prompt)
 
         return agent_output
