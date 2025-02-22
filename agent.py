@@ -3,7 +3,7 @@ import pandas as pd
 #import pinecone
 import json
 from openai import AzureOpenAI
-from langchain.vectorstores import Pinecone
+from langchain_community.vectorstores import Pinecone
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.chat_models import AzureChatOpenAI
 from langchain.prompts import ChatPromptTemplate
@@ -13,28 +13,16 @@ from langchain.memory import ConversationBufferMemory
 from llms import AzureOpenAIModels
 
 
-
-# Replace these placeholders with your actual Azure OpenAI credentials
-#AZURE_OPENAI_API_KEY = "your-azure-openai-key"
-#AZURE_ENDPOINT = "your-azure-endpoint"
-#API_VERSION = "2023-05-15"
-#DEPLOYMENT_NAME = "your-deployment-name"
-#PINECONE_API_KEY = "your-pinecone-api-key"
-#PINECONE_ENV = "your-pinecone-environment"
-#INDEX_NAME = "podcast-search"
-
-
 class Agent:
     """
     Represents an AI agent that performs micro tasks.
     """
     
-    def __init__(self, name, model, system_prompt_template, prompt_template):
+    def __init__(self, name, system_prompt_template, prompt_template):
         # Load the JSON file
         with open("agent_templates.json", "r") as file:
             agents_data = json.load(file)
 
-        # Print to verify
         self.AGENT_NAMES = agents_data.keys()  # Should print all agent names
 
         if name not in self.AGENT_NAMES:
@@ -51,10 +39,10 @@ class Agent:
             raise ValueError(f"Invalid prompt template. Choose from {self.PROMPT_TEMPLATES}")    
 
         self.name = name
-        self.model = AzureOpenAIModels().chat_model
+        self.model = AzureOpenAIModels()
         self.system_prompt_template = system_prompt_template
         self.prompt_template = ChatPromptTemplate.from_template(self.PROMPT_TEMPLATES[prompt_template])
-        self.instruction_prompt = agents_data[name]["PROMPT_TEMPLATES"][self.prompt_template]
+        self.instruction_prompt = self.prompt_template
 
     def run(self, input_data):
         """Executes the agent with the given input and returns structured output."""

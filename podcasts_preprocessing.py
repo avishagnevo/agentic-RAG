@@ -76,6 +76,8 @@ if __name__ == "__main__":
     # Add to_embed column to podcasts_filtered
     podcasts_filtered['to_embed'] = "podcast title: " + podcasts_filtered['title'] + ". podcast description: " + \
                                     podcasts_filtered['description']
+    # add column called 'dataset' to all rows with value 'podcasts'
+    podcasts_filtered['dataset'] = 'podcasts'
 
     # save podcasts_filtered to podcasts_filtered.csv
     podcasts_filtered.to_csv('podcasts_filtered.csv', index=False)

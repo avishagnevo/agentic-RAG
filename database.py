@@ -1,4 +1,3 @@
-import os
 import time
 import os
 import pandas as pd
@@ -17,18 +16,18 @@ from pinecone import Pinecone, ServerlessSpec
 from llms import AzureOpenAIModels
 
 
-# Replace these placeholders with your actual Azure OpenAI credentials
-AZURE_OPENAI_API_KEY = "your-azure-openai-key"
-AZURE_ENDPOINT = "your-azure-endpoint"
-API_VERSION = "2023-05-15"
-DEPLOYMENT_NAME = "your-deployment-name"
-PINECONE_API_KEY = "your-pinecone-api-key"
-PINECONE_ENV = "your-pinecone-environment"
-INDEX_NAME = "podcast-search"
+with open("keys.json", "r") as config_file:
+    config = json.load(config_file)
+
+PINECONE_API_KEY = config["PINECONE_API_KEY"]
+PINECONE_ENV = config["PINECONE_ENV"]
+INDEX_NAME = config["INDEX_NAME"]
+
+
 
 # Initialize Pinecone
-pinecone.init(api_key=PINECONE_API_KEY, environment=PINECONE_ENV)
-index = pinecone.Index(INDEX_NAME)
+# pinecone.init(api_key=PINECONE_API_KEY, environment=PINECONE_ENV)
+# index = pinecone.Index(INDEX_NAME)
 
 class Dataset:
     """
@@ -76,13 +75,12 @@ class Dataset:
 
 
 class Index:
-    def __init__(self, embedding_model, dataset, api_key, index_name: str, dimension: int, metric = "cosine"):
+    def __init__(self, embedding_model, dataset, index_name: str, dimension: int, metric = "cosine"):
         self.embedding_model = embedding_model
         self.dataset = dataset
         self.index_name = index_name
         self.dimension = dimension
         self.metric = metric
-        self.api_key = api_key
         self.index = self.init_client()
 
     def init_client(self):
@@ -91,9 +89,8 @@ class Index:
         :param api_key:
         :return:
         """
-        PINECONE_API_KEY = self.api_key
         index = Pinecone(api_key=PINECONE_API_KEY)
-        return pc
+        return index
 
 
     def create_index(self):
@@ -191,9 +188,12 @@ class Index:
 
 
 def init_database():
-    PINECONE_API_KEY = #'bb68c35d-a2f2-47a7-9d21-78f0e3b0ab68'
-    index_name = "agentic-RAG" 
-    dimension = #0
+    index_name = "agentic-RAG"
+    dimension = 1024
+
+    # Initialize Pinecone
+    pinecone.init(api_key=PINECONE_API_KEY, environment=PINECONE_ENV) # TODO i moved it from above - commited line 29
+    index = pinecone.Index(INDEX_NAME) # TODO i moved it from above - commited line 30
 
     # Load the data
     data_episodes_path = 'data/episodes.csv'
@@ -203,7 +203,7 @@ def init_database():
     embedding_model = model.embedding_model
     dataset = Dataset(embedding_model, data_episodes_path, data_podcasts_path)
 
-    index = Index(embedding_model, dataset, PINECONE_API_KEY, index_name, dimension, metric="cosine")
+    index = Index(embedding_model, dataset, index_name, dimension, metric="cosine")
 
     # Uncomment to create the index (only needs to be done once)
     # index.create_index()
@@ -211,7 +211,7 @@ def init_database():
     index.upsert_by_chunks(dataset.data_episodes)
     index.upsert_by_chunks(dataset.data_podcasts)
 
-    return index, dataset, model
+    return index, dataset, embedding_model
 
 
 if __name__ == "__main__":
