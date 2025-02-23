@@ -65,7 +65,7 @@ class Dataset:
             metadata['show_name'] = entry['show.name']
             metadata['episode_description'] = entry['description']
             metadata['show_description'] = entry['show.description']
-            metadata['duration_min'] = int(entry['duration_ms'] // 60000)
+            metadata['duration_min'] = int(entry['duration_ms'] // 60000) # TODO the new preprocessed is already in minutes
             #id,episodeUri,showUri,episodeName,description,show.name,show.description,show.publisher,duration_ms,to_embed
 
         else:
