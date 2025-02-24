@@ -207,8 +207,8 @@ def init_database():
     # Uncomment to create the index (only needs to be done once)
     # index.create_index()
 
-    index.upsert_by_chunks(dataset.data_episodes)
-    index.upsert_by_chunks(dataset.data_podcasts)
+    #index.upsert_by_chunks(dataset.data_episodes)
+    #index.upsert_by_chunks(dataset.data_podcasts)
 
     return index, dataset, model
 
