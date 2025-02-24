@@ -1,6 +1,8 @@
 from agent import Agent
 import database
 from llms import AzureOpenAIModels
+import json
+import re
 
 
 class AgenticPipeline:
@@ -43,6 +45,8 @@ class AgenticPipeline:
         
         # Step 2: Index Filters Extraction
         search_filters = self.agents["SearchFilters"].run(processed_input) #should return an output like a Pinecone filter
+        search_filters = json.loads(re.sub(r"```json\n?|```", "", search_filters).strip())
+        search_filters = {k: v for k, v in search_filters.items() if v is not None}
         print("Search Details:", search_filters)
         
         # Step 3: Need Understanding & Augmentation
@@ -94,13 +98,13 @@ if __name__ == "__main__":
     # user_prompt = "Find me top Data Science podcasts."
     # user_prompt = "I really want to here about RAG"
     user_prompt = "Give me 54 optional podcasts episodes that talked about llms"
-    # index, dataset, embedding_model = initialize_index()
-    # run_pipeline(index, dataset, embedding_model, user_prompt)
+    index, dataset, embedding_model = initialize_index()
+    run_pipeline(index, dataset, embedding_model, user_prompt)
 
-    # llm test
-    agent2 = Agent("SearchFilters", "structured", "FewShot")
-    filtered_prompt = agent2.run(user_prompt)
-    print(filtered_prompt)
-    embedding_model = AzureOpenAIModels().embedding_model
-    query_embedding = embedding_model.embed_query(filtered_prompt)
-    print(query_embedding[:10]) # Show the first 10 characters of the first vector
+    # # llm test
+    # agent2 = Agent("SearchFilters", "structured", "FewShot")
+    # filtered_prompt = agent2.run(user_prompt)
+    # print(filtered_prompt)
+    # embedding_model = AzureOpenAIModels().embedding_model
+    # query_embedding = embedding_model.embed_query(filtered_prompt)
+    # print(query_embedding[:10]) # Show the first 10 characters of the first vector
