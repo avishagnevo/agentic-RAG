@@ -74,3 +74,26 @@ def check_search_filters(search_filters):
         search_filters["Pinecone Format"] = {}
 
     return search_filters
+
+def check_selector_output(podcast_selection, search_results, search_filters):
+    """
+    Check the selector output and return a list of selected IDs
+    :param podcast_selection: selector output
+    :param search_results: search results
+    :param search_filters: search filters
+    """
+    try:
+        # Strip any extraneous whitespace
+        podcast_selection_clean = podcast_selection.strip()
+        # Attempt to load the plain list (e.g., ["p2"]) directly
+        selected_ids = json.loads(podcast_selection_clean)
+        if not isinstance(selected_ids, list) or len(selected_ids) != search_filters["recommendation_amount"]:
+            raise ValueError("Invalid podcast selection.")
+    except Exception as ex:
+        print("Error with Selector agent output:", ex)
+        # Fallback: sort search_results by score and select the top IDs accordingly
+        sorted_results = sorted(search_results, key=lambda x: x.get("score", 0), reverse=True)
+        selected_ids = [result["id"] for result in sorted_results[:search_filters["recommendation_amount"]]]
+        print("Fallback selected IDs based on score:", selected_ids)
+
+    return selected_ids

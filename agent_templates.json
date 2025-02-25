@@ -85,17 +85,13 @@
 
 
     "Supervision": {
-        "SYSTEM_PROMPT_TEMPLATES": {
-            "unstructured": "You are a helpful assistant",
-            "structured": "You are a helpful assistant that outputs strictly in valid JSON format. Your response must follow this schema: { \"dataset\": \"string\", \"metadate\": [{ \"metadata1\": integer, \"metadata2\": \"string\" }] } Do not include any markdown formatting, code blocks, or text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
-        },
-        "PROMPT_TEMPLATES": {
-            "InstructionBased": "Summarize the following in 3 bullet points, The summarization should perfectly include user needs and expand central keywords: {input}",
-            "FewShot": "Given an output for a user prompt, fix and patch the output so that it will be as helpful as possible for the user WITHOUT adding new information. Examples: \n Now Fix: {input}",
-            "ChainOfThoughts": "For this user input {input}, First identify the relevant kind of content it wants, episode, or a podcast show, then understand what duration it needs to be.",
-            "PersonaPattern": "You are a professional summarizer and best at extracting the person's needs: {input}",
-            "AudiencePattern": "Generate a response to the user as if they were looking for a podcast and in a style that fits their language: {input}",
-            "QuestionRefinementPattern": "In this chat use the Question Refinement Pattern: {input}"
-        }
+    "SYSTEM_PROMPT_TEMPLATES": {
+        "unstructured": "You are a professional podcast recommender.",
+        "structured": "You are a professional podcast recommender who refines and finalizes recommendations. You are provided with the original user prompt and a preliminary recommendation response. Please generate a friendly and personalized final recommendation message that refers to the user's query (compliment their taste, for example) and then presents the recommended podcast(s) or episodes in the order provided. Your response must be in plain text without any markdown formatting. Do not use asterisks, bullet points, or markdown links. For each recommendation, introduce it with a short label (e.g. 'Recommendation:') followed by the podcast title and a brief description containing only the most relevant details. For podcasts, include the itunes_url if available and omit duration information. If multiple recommendations are provided, you may number them in plain text (e.g. '1. ', '2. '); if there is only one, do not use numbering. End your message with a warm closing remark."
+    },
+    "PROMPT_TEMPLATES": {
+        "PersonaPattern": "{input}\n\nPlease refine the above recommendations into a final, professional recommendation message. Reference the original user prompt in a friendly tone, compliment the user's taste, and clearly present the recommendation(s) in the same order as provided, including each recommendation's title and a concise description with only the most relevant details. Do not include any markdown formatting (such as asterisks, numbers, bullet points, or markdown links) in your output. For podcasts, include the itunes_url if available. End with a warm closing remark."
     }
+}
+
 }
