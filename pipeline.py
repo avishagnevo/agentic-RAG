@@ -130,14 +130,51 @@ def run_pipeline(index, dataset, embedding_model, user_prompt):
     final_output = pipeline.execute(user_prompt)
     print(f"\n\n\n\n\n##########################################################################")
     print(final_output)
-         
+
+
+def interactive_conversation(index, dataset, embedding_model):
+    pipeline = AgenticPipeline(index, dataset, embedding_model)
+    conversation_history = ""  # store all conversation turns as a single string
+    print(
+        "Welcome to the Podcast Recommender! Feel free to ask for new podcasts or request explanations on previous recommendations. Type 'exit' to quit.")
+
+    while True:
+        # user_input = input("Enter your request: ") # TODO uncomment this line when finished testing
+        # user_prompt = "Find me top Data Science podcasts."
+        #     # user_prompt = "I love eating pizza"
+        #     # user_prompt = "I want knowledge on karate"
+        #     # user_prompt = "Help me to learn coding in my coffee break tomorrow"
+        user_input = "I want one podcast about photography"
+
+        if user_input.lower() in ['exit', 'quit']:
+            print("Goodbye!")
+            break
+
+        # Append the new user input to the conversation history.
+        conversation_history += "\nUser: " + user_input
+
+        # Pass the full conversation history to the pipeline so the agents have the full context.
+        final_output = pipeline.execute(conversation_history)
+
+        # Append the agent's reply to the conversation history.
+        conversation_history += "\nAgent: " + final_output
+
+        print(f"\n\n\n\n\n##########################################################################")
+        # Display the agent's response.
+        print(final_output)
+        break
+
 
 if __name__ == "__main__":
-    # user_prompt = "Find me top Data Science podcasts."
-    # user_prompt = "I love eating pizza"
-    # user_prompt = "I want knowledge on karate"
-    # user_prompt = "Help me to learn coding in my coffee break tomorrow"
-    user_prompt = "I want one podcast about photography"
-
     index, dataset, embedding_model = initialize_index()
-    run_pipeline(index, dataset, embedding_model, user_prompt)
+    interactive_conversation(index, dataset, embedding_model)
+
+# if __name__ == "__main__":
+#     # user_prompt = "Find me top Data Science podcasts."
+#     # user_prompt = "I love eating pizza"
+#     # user_prompt = "I want knowledge on karate"
+#     # user_prompt = "Help me to learn coding in my coffee break tomorrow"
+#     user_prompt = "I want one podcast about photography"
+#
+#     index, dataset, embedding_model = initialize_index()
+#     run_pipeline(index, dataset, embedding_model, user_prompt)
