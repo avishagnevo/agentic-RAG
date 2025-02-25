@@ -188,7 +188,10 @@ class Index:
         # TODO filters["recommendation_amount"] should not be part of the filter_query by the top_k
         filter_query = filters if filters else {}
         # results = self.index.query(vector=query_embedding, top_k=top_k, filter=filter_query, include_metadata=True, namespace="ns0")
-        top_k = filters["recommendation_amount"]
+        try:
+            top_k = min(filters["recommendation_amount"],10) # TODO add message if user requested more then 10
+        except:
+            top_k = 10
         filter_query.pop('recommendation_amount', None)
         results = self.index.query(vector=query_embedding, top_k=top_k, filter=filter_query, include_metadata=True, namespace="ns0")
         return results["matches"]        

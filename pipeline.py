@@ -22,6 +22,7 @@ class AgenticPipeline:
             "QueryInitialCheck": Agent("QueryInitialCheck", "structured", "QuestionRefinementPattern"), # or "InstructionBased"
             "SearchFilters": Agent("SearchFilters", "structured", "FewShot"),
             "NeedUnderstanding": Agent("NeedUnderstanding", "structured", "PersonaPattern"),
+            "DescriptionSummarizer": Agent("DescriptionSummarizer", "structured", "FewShot"),
             "ResponseGeneration": Agent("ResponseGeneration", "unstructured", "AudiencePattern"),
             "Supervision": Agent("Supervision", "structured", "FewShot"),
         }
@@ -36,7 +37,7 @@ class AgenticPipeline:
         query_pass = self.agents["QueryInitialCheck"].run(user_query) #should return an output like a Pinecone filter
         print("User Query Pass?", query_pass)
 
-        if not query_pass: #not luke that, its just pseodu code
+        if not query_pass: #not luke that, its just pseudo code
             return "Sorry, I didn't understand your query. Please try again." #or something else generated with "QueryInitialCheck" agent
 
         # Step 1: User Input Processing
@@ -45,7 +46,13 @@ class AgenticPipeline:
         
         # Step 2: Index Filters Extraction
         search_filters = self.agents["SearchFilters"].run(processed_input) #should return an output like a Pinecone filter
-        search_filters = json.loads(re.sub(r"```json\n?|```", "", search_filters).strip())
+        try:
+            search_filters = json.loads(re.sub(r"```json\n?|```", "", search_filters).strip())
+        except:
+            fixed_json_str = re.sub(r'(\w+):', r'"\1":', search_filters)
+            fixed_json_str = fixed_json_str.replace("episodes", '"episodes"')
+            search_filters = json.loads(fixed_json_str)
+
         search_filters = {k: v for k, v in search_filters.items() if v is not None}
         print("Search Details:", search_filters)
         
@@ -59,6 +66,10 @@ class AgenticPipeline:
         print("Semantic Search Results:", search_results)
 
         #maybe add another supervision here?
+                    
+        # Step 4.5: Summarizing of podcast descriptions
+        for podcast in search_results:
+            podcast['metadata']['episode_description'] = podcast['metadata']['episode_description'][:100]
         
         # Step 5: Augmented Prompt Construction
         augmented_prompt = {
@@ -73,7 +84,7 @@ class AgenticPipeline:
         print("Generated Response:", response)
         
         # Step 7: Supervision & Refinement
-        final_response = self.agents["Supervision"].run(response)
+        final_response = self.agents["Supervision"].run({"response":response, "original_prompt":user_query})
         print("Final Validated Response:", final_response)
 
         #maybe only if PASS then return final_response, otherwise do something else

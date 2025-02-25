@@ -20,7 +20,7 @@
         },
         "PROMPT_TEMPLATES": {
             "InstructionBased": "Summarize the following in 3 bullet points, The summarization should perfectly include user needs and expand central keywords: {input}",
-            "FewShot": "Examples: Example 1: Input: 'I want 3 podcast shows about health and wellness.' Output: {{ dataset: podcast, recommendation_amount: 3, duration_range_bottom: null, duration_range_top: null }}\n Example 2: Input: 'I want to here about bitcoin.' Output: {{ dataset: both, recommendation_amount: 5, duration_range_bottom: 5, duration_range_top: 150 }}\n Example 3: Input: 'I want good finance talking to hear in my way to work tomorrow.' Output: {{ dataset: episodes, recommendation_amount: 1, duration_range_bottom: 10, duration_range_top: 60 }}\n Example 4: Input: 'I need fast review on rag .' Output: {{ dataset: episodes, recommendation_amount: 3, duration_range_bottom: 0, duration_range_top: 10 }}\n Now extract for: {input}",
+            "FewShot": "Examples: Example 1: Input: 'I want 3 podcast shows about health and wellness.' Output: {{ dataset: podcast, recommendation_amount: 3, duration_range_bottom: null, duration_range_top: null }}\n Example 2: Input: 'I want to learn about bitcoin.' Output: {{ dataset: both, recommendation_amount: 5, duration_range_bottom: 5, duration_range_top: 150 }}\n Example 3: Input: 'I want good finance podcasts to listen to on my way to work tomorrow.' Output: {{ dataset: episodes, recommendation_amount: 1, duration_range_bottom: 10, duration_range_top: 60 }}\n Example 4: Input: 'I need quick review on rag .' Output: {{ dataset: episodes, recommendation_amount: 3, duration_range_bottom: 0, duration_range_top: 10 }}\n Now extract for: {input}",
             "PersonaPattern": "You are a professional summarizer and best at extracting the person's needs: {input}",
             "AudiencePattern": "Generate a response to the user as if they were looking for a podcast and in a style that fits their language: {input}",
             "QuestionRefinementPattern": "In this chat use the Question Refinement Pattern: {input}"
@@ -34,6 +34,20 @@
         },
         "PROMPT_TEMPLATES": {
             "InstructionBased": "Summarize the following in 3 bullet points, The summarization should perfectly include user needs and expand central keywords: {input}",
+            "FewShot": "Extract the user duration of podcast and subject. Examples: {should add examples} \n Now Extract: {input}",
+            "ChainOfThoughts": "For this user input {input}, First identify the relevant kind of content it wants, episode, or a podcast show, then understand what duration it needs to be.",
+            "PersonaPattern": "You are a professional summarizer and best at extracting the person's needs: {input}",
+            "AudiencePattern": "Generate a response to the user as if they were looking for a podcast and in a style that fits their language: {input}",
+            "QuestionRefinementPattern": "In this chat use the Question Refinement Pattern: {input}"
+        }
+    },
+    "DescriptionSummarizer":{
+        "SYSTEM_PROMPT_TEMPLATES": {
+            "unstructured": "You are a helpful assistant",
+            "structured": "You are a helpful assistant that outputs strictly in valid JSON format. Your response must follow this schema: { \"dataset\": \"string\", \"metadate\": [{ \"metadata1\": integer, \"metadata2\": \"string\" }] } Do not include any markdown formatting, code blocks, or text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
+        },
+        "PROMPT_TEMPLATES": {
+            "InstructionBased": "Summarize the following podcast description in a maximum of 3 sentences, the summarization should perfectly include the subject of the podcast and expand central keywords: {input}",
             "FewShot": "Extract the user duration of podcast and subject. Examples: {should add examples} \n Now Extract: {input}",
             "ChainOfThoughts": "For this user input {input}, First identify the relevant kind of content it wants, episode, or a podcast show, then understand what duration it needs to be.",
             "PersonaPattern": "You are a professional summarizer and best at extracting the person's needs: {input}",
@@ -62,7 +76,7 @@
         },
         "PROMPT_TEMPLATES": {
             "InstructionBased": "Summarize the following in 3 bullet points, The summarization should perfectly include user needs and expand central keywords: {input}",
-            "FewShot": "Extract the user duration of podcast and subject. Examples: {should add examples} \n Now Extract: {input}",
+            "FewShot": "Given an output for a user prompt, fix and patch the output so that it will be as helpful as possible for the user WITHOUT adding new information. Examples: \n Now Fix: {input}", 
             "ChainOfThoughts": "For this user input {input}, First identify the relevant kind of content it wants, episode, or a podcast show, then understand what duration it needs to be.",
             "PersonaPattern": "You are a professional summarizer and best at extracting the person's needs: {input}",
             "AudiencePattern": "Generate a response to the user as if they were looking for a podcast and in a style that fits their language: {input}",
