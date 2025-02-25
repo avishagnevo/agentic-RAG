@@ -1,33 +1,27 @@
 {
     "QueryInitialCheck": {
         "SYSTEM_PROMPT_TEMPLATES": {
-            "unstructured": "You are a helpful assistant",
-            "structured": "You are a helpful assistant that outputs strictly in valid JSON format. Your response must follow this schema: { \"dataset\": \"string\", \"metadate\": [{ \"metadata1\": integer, \"metadata2\": \"string\" }] } Do not include any markdown formatting, code blocks, or text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
-        },
+            "unstructured": "You are a helpful assistant.",
+            "structured": "You are a helpful assistant that determines if a user prompt is related to a podcast search task. Analyze the input and output strictly in valid JSON format following this schema: {{ pass: boolean, reason: string }}. If the input clearly specifies a search for podcasts, podcast shows, episodes, or any audio content (for example, using phrases like 'hear' or 'listen'), return pass as true with a brief explanation. Minor spelling errors or typos should be tolerated if the intended meaning is clear. Otherwise, return pass as false with a concise explanation of what additional information is needed. Do not include any markdown formatting, code blocks, or any text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."},
         "PROMPT_TEMPLATES": {
-            "InstructionBased": "Summarize the following in 3 bullet points, The summarization should perfectly include user needs and expand central keywords: {input}",
-            "FewShot": "Extract the user duration of podcast and subject. Examples: {should add examples} \n Now Extract: {input}",
-            "ChainOfThoughts": "For this user input {input}, First identify the relevant kind of content it wants, episode, or a podcast show, then understand what duration it needs to be.",
-            "PersonaPattern": "You are a professional summarizer and best at extracting the person's needs: {input}",
-            "AudiencePattern": "Generate a response to the user as if they were looking for a podcast and in a style that fits their language: {input}",
-            "QuestionRefinementPattern": "In this chat use the Question Refinement Pattern: {input}"
-        }
-    },
+            "InstructionBased": "Evaluate if the following input is related to a podcast search task. Provide your output in JSON format. Input: {input}",
+            "FewShot": "Example 1: Input: Find some history podcasts about World War II. Output: {{ pass: true, reason: User clearly seeks history podcasts about World War II. }}\n Example 2: Input: I need something to listen to. Output: {{ pass: false, reason: The prompt is too vague; it does not specify a podcast search. }}\n Example 3: Input: I really want to here about RAG. Output: {{ pass: true, reason: The query implies a search for audio content related to RAG, despite a minor typo. }}\nNow Evaluate: {input}.\nThe JSON you return must be ready to be delivered directly to the user as feedback.",
+            "ChainOfThoughts": "For the given user input: {input}, determine if it requests podcasts, podcast shows, episodes, or other audio content. If yes, return {{ pass: true, reason: Query relates to a podcast search or audio content. }} If not, return {{ pass: false, reason: Additional details needed to confirm podcast search intent. }}.",
+            "AudiencePattern": "Assume the user is seeking podcasts. Evaluate the query: {input} and output a JSON object with a boolean 'pass' and a concise explanation in 'reason'.",
+            "QuestionRefinementPattern": "Check if the following input: {input} clearly indicates a search for podcasts, shows, episodes, or audio content. Return your result in JSON format with a boolean 'pass' and a short explanation in 'reason'." } },
+
+
     "SearchFilters": {
         "SYSTEM_PROMPT_TEMPLATES": {
             "unstructured": "You are a helpful assistant",
-            "structured": "You are a helpful assistant that help me analyze user prompt to details and outputs strictly in valid JSON format. Your response must follow this schema: { dataset: string, recommendation_amount: integer, duration_range_bottom: integer or null, duration_range_top: integer or null }. The user should ask for podcast show, shows or episode, episodes. You need to infer and fill the schema in the following way. The 'dataset' value should be either 'podcast', 'episodes', or 'both', understand from user prompt if he is looking for podcast (show) or specific episode about a topic or both. If the user prompt does not specify an episode duration preference, set duration_range_bottom and duration_range_top to null. recommendation_amount - approximation of how many recommendations the user looking for based on the user prompt. If the user use in plural form or words like few, some, top, etc or if the user talked about a topic without asking for only one recommendation,  the number will be more than 1. The number needs to be an int number. duration_range_bottom: if episodes dataset chosen, understand an approximation of the minimum duration of the episode that the user want in minutes. duration_range_top: if episodes dataset chosen, understand an approximation of maximum duration the of episode that the user want in minutes. Do not include any markdown formatting, code blocks, or any text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
+            "structured": "You are a helpful assistant that analyzes user prompts to extract detailed needs for podcast recommendations. Output strictly in valid JSON format following this schema: {{ dataset: string, recommendation_amount: integer, duration_range: string }}. The dataset value should be either podcast, episodes, or both, determined by whether the user is asking for a podcast show, a specific episode, or both. The recommendation_amount should be an approximate number of recommendations desired, expressed as an integer, and must be a reasonable value typically between 1 and 10. If the prompt does not clearly specify a number, default to 1 if singular language is used, or default to 3 if multiple recommendations are implied. The duration_range should be one of the following: 'short' for episodes up to 15 minutes, 'mid' for episodes between 15 and 45 minutes, 'mid high' for episodes between 45 and 90 minutes, 'long' for episodes over 90 minutes, or 'not_limited' if the prompt does not specify a duration preference. Do not include any markdown formatting, code blocks, or any text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
         },
         "PROMPT_TEMPLATES": {
-            "InstructionBased": "Summarize the following in 3 bullet points, The summarization should perfectly include user needs and expand central keywords: {input}",
-            "FewShot": "Examples: Example 1: Input: 'I want 3 podcast shows about health and wellness.' Output: {{ dataset: podcast, recommendation_amount: 3, duration_range_bottom: null, duration_range_top: null }}\n Example 2: Input: 'I want to learn about bitcoin.' Output: {{ dataset: both, recommendation_amount: 5, duration_range_bottom: 5, duration_range_top: 150 }}\n Example 3: Input: 'I want good finance podcasts to listen to on my way to work tomorrow.' Output: {{ dataset: episodes, recommendation_amount: 1, duration_range_bottom: 10, duration_range_top: 60 }}\n Example 4: Input: 'I need quick review on rag .' Output: {{ dataset: episodes, recommendation_amount: 3, duration_range_bottom: 0, duration_range_top: 10 }}\n Now extract for: {input}",
-            "PersonaPattern": "You are a professional summarizer and best at extracting the person's needs: {input}",
-            "AudiencePattern": "Generate a response to the user as if they were looking for a podcast and in a style that fits their language: {input}",
-            "QuestionRefinementPattern": "In this chat use the Question Refinement Pattern: {input}"
+        "FewShot": "Example 1: Input: 'I want 3 podcast shows about health and wellness.' Output: {{ dataset: podcast, recommendation_amount: 3, duration_range: not_limited }}\nExample 2: Input: 'I want to learn about bitcoin.' Output: {{ dataset: both, recommendation_amount: 5, duration_range: not_limited }}\nExample 3: Input: 'I want good finance podcasts to listen to on my way to work tomorrow.' Output: {{ dataset: episodes, recommendation_amount: 1, duration_range: mid }}\nExample 4: Input: 'I need a quick review on RAG.' Output: {{ dataset: episodes, recommendation_amount: 3, duration_range: short }}\nNow extract for: {input}. The JSON you return must be ready to be delivered directly to the user as feedback."
         }
     },
 
-    "NeedUnderstanding": {
+    "NeedUnderstanding_old": {
         "SYSTEM_PROMPT_TEMPLATES": {
             "unstructured": "You are a helpful assistant",
             "structured": "You are a helpful assistant that help me analyze user prompt to details and outputs strictly in valid JSON format. Your response must follow this schema: { dataset: string, recommendation_amount: integer, duration_range_bottom: integer or null, duration_range_top: integer or null }. The user should ask for podcast show, shows or episode, episodes. You need to infer and fill the schema in the following way. The 'dataset' value should be either 'podcast', 'episodes', or 'both', understand from user prompt if he is looking for podcast (show) or specific episode about a topic or both. If the user prompt does not specify an episode duration preference, set duration_range_bottom and duration_range_top to null. recommendation_amount - understand how much recommendations the user looking for based on the user prompt, needs to be an int number. duration_range_bottom: if episodes dataset chosen, understand an approximation of the minimum duration of the episode that the user want in minutes. duration_range_top: if episodes dataset chosen, understand an approximation of maximum duration the of episode that the user want in minutes. Do not include any markdown formatting, code blocks, or any text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
@@ -41,6 +35,28 @@
             "QuestionRefinementPattern": "In this chat use the Question Refinement Pattern: {input}"
         }
     },
+
+    "NeedUnderstanding": {
+        "SYSTEM_PROMPT_TEMPLATES": {
+            "unstructured": "You are a helpful assistant.",
+            "structured": "You are a helpful assistant that takes a user prompt and transforms it into an optimized search query for ANN search in our podcast or episode embedding model. Your output should be plain text without any additional commentary, markdown formatting, or code blocks. The transformed prompt must retain essential keywords and context from the original prompt and be concise and descriptive to improve semantic matching. The output should be ready for embedding." },
+        "PROMPT_TEMPLATES": {
+            "InstructionBased": "Optimize the following user prompt for ANN search in our podcast database: {input}"
+              }
+    },
+
+    "Selector": {
+    "SYSTEM_PROMPT_TEMPLATES": {
+        "unstructured": "You are a creative and discerning assistant.",
+        "structured": "You are a creative and discerning assistant that takes an augmented prompt containing a list of search results (each with an 'id' and 'text'), a recommendation_amount, processed_input, and needs_summary, and selects the top recommendations. Your output must be a plain list of IDs with no additional formatting or markdown. The output should exactly follow one of these examples: [\"p2\"] or [\"e11\", \"p580\", \"e83\"]. Do not include any extra text or code fences."
+    },
+    "PROMPT_TEMPLATES": {
+        "InstructionBased": "Examine the following augmented prompt and select the top recommendations by their 'id'. Return a plain list of IDs (for example: [\"p2\"] or [\"e11\", \"p580\", \"e83\"]) corresponding to the number specified by recommendation_amount. Augmented Prompt: {input}"
+    }
+},
+
+
+
     "DescriptionSummarizer":{
         "SYSTEM_PROMPT_TEMPLATES": {
             "unstructured": "You are a helpful assistant",
@@ -55,20 +71,19 @@
             "QuestionRefinementPattern": "In this chat use the Question Refinement Pattern: {input}"
         }
     },
+
     "ResponseGeneration": {
-        "SYSTEM_PROMPT_TEMPLATES": {
-            "unstructured": "You are a helpful assistant",
-            "structured": "You are a helpful assistant that outputs strictly in valid JSON format. Your response must follow this schema: { \"dataset\": \"string\", \"metadate\": [{ \"metadata1\": integer, \"metadata2\": \"string\" }] } Do not include any markdown formatting, code blocks, or text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
-        },
-        "PROMPT_TEMPLATES": {
-            "InstructionBased": "Summarize the following in 3 bullet points, The summarization should perfectly include user needs and expand central keywords: {input}",
-            "FewShot": "Extract the user duration of podcast and subject. Examples: {should add examples} \n Now Extract: {input}",
-            "ChainOfThoughts": "For this user input {input}, First identify the relevant kind of content it wants, episode, or a podcast show, then understand what duration it needs to be.",
-            "PersonaPattern": "You are a professional summarizer and best at extracting the person's needs: {input}",
-            "AudiencePattern": "Generate a response to the user as if they were looking for a podcast and in a style that fits their language: {input}",
-            "QuestionRefinementPattern": "In this chat use the Question Refinement Pattern: {input}"
-        }
+    "SYSTEM_PROMPT_TEMPLATES": {
+        "unstructured": "You are a creative and helpful assistant.",
+        "structured": "You are a creative and discerning assistant tasked with generating a final recommendation message for the user. Your output must be plain text with no markdown formatting (avoid symbols like #, -, **, etc.). For each recommendation, include the rank number, the title (or episodeName), and a brief description derived from the metadata text. For podcasts, do not include a duration; instead, include the itunes_url if available. For episodes, include the duration in minutes if provided. Your response should be concise, well-structured, and suitable for direct user consumption."
     },
+    "PROMPT_TEMPLATES": {
+        "InstructionBased": "Given the following JSON array of selected recommendations (each object includes 'id', 'title' or 'episodeName', 'duration_min' (optional), 'itunes_url' (optional), and 'text'), generate a ranked recommendation message. Each recommendation should begin with its rank number followed by a period and a space, then the title (or episodeName) and a brief description. For podcasts, include the itunes_url if available and omit duration; for episodes, include the duration if provided. Produce a plain text output with no markdown formatting. Input: {input}"
+    }
+},
+
+
+
     "Supervision": {
         "SYSTEM_PROMPT_TEMPLATES": {
             "unstructured": "You are a helpful assistant",
@@ -76,7 +91,7 @@
         },
         "PROMPT_TEMPLATES": {
             "InstructionBased": "Summarize the following in 3 bullet points, The summarization should perfectly include user needs and expand central keywords: {input}",
-            "FewShot": "Given an output for a user prompt, fix and patch the output so that it will be as helpful as possible for the user WITHOUT adding new information. Examples: \n Now Fix: {input}", 
+            "FewShot": "Given an output for a user prompt, fix and patch the output so that it will be as helpful as possible for the user WITHOUT adding new information. Examples: \n Now Fix: {input}",
             "ChainOfThoughts": "For this user input {input}, First identify the relevant kind of content it wants, episode, or a podcast show, then understand what duration it needs to be.",
             "PersonaPattern": "You are a professional summarizer and best at extracting the person's needs: {input}",
             "AudiencePattern": "Generate a response to the user as if they were looking for a podcast and in a style that fits their language: {input}",

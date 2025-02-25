@@ -1,12 +1,10 @@
 import time
-import os
 import pandas as pd
 import pinecone
 import json
 import itertools
-from openai import AzureOpenAI
-from langchain.vectorstores import Pinecone
-from langchain.embeddings.openai import OpenAIEmbeddings
+# from langchain.vectorstores import Pinecone
+from langchain_community.vectorstores import Pinecone
 from langchain.chat_models import AzureChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import HumanMessage
@@ -183,17 +181,9 @@ class Index:
             chunk = tuple(itertools.islice(it, batch_size))
 
 
-    def retrieve_data(self, query_embedding, top_k=5, filters=None):
+    def retrieve_data(self, query_embedding, top_k, filters):
         """Performs semantic search with metadata filtering."""
-        # TODO filters["recommendation_amount"] should not be part of the filter_query by the top_k
-        filter_query = filters if filters else {}
-        # results = self.index.query(vector=query_embedding, top_k=top_k, filter=filter_query, include_metadata=True, namespace="ns0")
-        try:
-            top_k = min(filters["recommendation_amount"],10) # TODO add message if user requested more then 10
-        except:
-            top_k = 10
-        filter_query.pop('recommendation_amount', None)
-        results = self.index.query(vector=query_embedding, top_k=top_k, filter=filter_query, include_metadata=True, namespace="ns0")
+        results = self.index.query(vector=query_embedding, top_k=top_k, filter=filters, include_metadata=True, namespace="ns0")
         return results["matches"]        
 
 

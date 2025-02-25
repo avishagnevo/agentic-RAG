@@ -55,7 +55,7 @@ class AzureOpenAIModels:
             azure_deployment=EMBEDDING_DEPLOYMENT,
             api_key=AZURE_OPENAI_API_KEY,
             azure_endpoint=AZURE_ENDPOINT,
-            openai_api_version=API_VERSION,
+            openai_api_version="2023-05-15",
             openai_api_type="azure",
             dimensions = 1024, # Can specify dimensions with new text-embedding-3 models
         )
@@ -70,7 +70,6 @@ class AzureOpenAIModels:
     def get_query_embedding(self, query : str) -> list[float]:
         """Generates an embedding for the given text using Azure OpenAI."""
         query_embedding = self.embedding_model.embed_query(query)
-        print(query_embedding[:10]) # Show the first 10 characters of the first vector
 
         return query_embedding
 
@@ -82,5 +81,4 @@ class AzureOpenAIModels:
             ("human", prompt),
         ]
         raw_respond = self.chat_model.invoke(messages)
-        print(raw_respond.content)
         return raw_respond.content

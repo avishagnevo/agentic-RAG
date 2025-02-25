@@ -1,17 +1,7 @@
-import os
-import pandas as pd
-#import pinecone
 import json
-from openai import AzureOpenAI
-from langchain_community.vectorstores import Pinecone
-from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.chat_models import AzureChatOpenAI
 from langchain.prompts import ChatPromptTemplate
-from langchain.schema import HumanMessage
 from langchain.chains import SimpleSequentialChain
-from langchain.memory import ConversationBufferMemory
 from llms import AzureOpenAIModels
-
 
 class Agent:
     """
@@ -53,4 +43,6 @@ class Agent:
             import base64
             formatted_prompt = base64.b64encode(formatted_prompt.encode()).decode()
             agent_output = self.model.get_chat_response(self.system_prompt_template, formatted_prompt)
+            print("Error in agent execution. Trying base64 encoding.")
+            print(agent_output)
         return agent_output
