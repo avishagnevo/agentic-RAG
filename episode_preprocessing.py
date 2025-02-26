@@ -100,5 +100,22 @@ def preprocess_episodes():
     df['to_embed'] = "episode name: " + df['episodeName'] + ".\npodcast description: "  + df['description']
     df.to_csv('preprocessed_episodes.csv')
 
+    df["episodeUri"] = "https://open.spotify.com/episode/" + df["episodeUri"]
+    df["showUri"] = "https://open.spotify.com/show/" + df["showUri"]
+    df['duration_ms'] = df['duration_ms'] / 60000
+    df.set_index('id')
+
+    # Create a new column with the word count of each description
+    df['word_count'] = df['description'].str.split().str.len()
+
+    # Filter out rows where the word count is less than 5
+    df = df[df['word_count'] >= 5]
+
+    # Optionally, drop the 'word_count' column if you no longer need it
+    df = df.drop(columns=['word_count'])
+
+    df.to_csv('preprocessed_episodes.csv')
+    print(df.columns)
+
 if __name__ == "__main__":
     preprocess_episodes()
