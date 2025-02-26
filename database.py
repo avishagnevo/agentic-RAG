@@ -1,10 +1,12 @@
 import time
+import os
 import pandas as pd
 import pinecone
 import json
 import itertools
-# from langchain.vectorstores import Pinecone
-from langchain_community.vectorstores import Pinecone
+from openai import AzureOpenAI
+from langchain.vectorstores import Pinecone
+from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.chat_models import AzureChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import HumanMessage
@@ -63,7 +65,7 @@ class Dataset:
             metadata['show_name'] = entry['show.name']
             metadata['episode_description'] = entry['description']
             metadata['show_description'] = entry['show.description']
-            metadata['duration_min'] = int(entry['duration_ms'] // 60000) # TODO the new preprocessed is already in minutes
+            metadata['duration_min'] = int(entry['duration_ms'] // 60000)
             #id,episodeUri,showUri,episodeName,description,show.name,show.description,show.publisher,duration_ms,to_embed
 
         else:
@@ -161,7 +163,7 @@ class Index:
 
             self.add_to_index(data, embeddings)
             # Sleep for 0.5 second
-            time.sleep(0.5)    
+            time.sleep(0.2)    
 
             print(f"Dataset[{i}:{j}] added to the Pinecone index!")        
          
@@ -181,20 +183,20 @@ class Index:
             chunk = tuple(itertools.islice(it, batch_size))
 
 
-    def retrieve_data(self, query_embedding, top_k, filters):
+    def retrieve_data(self, query_embedding, top_k=5, filters=None):
         """Performs semantic search with metadata filtering."""
-        results = self.index.query(vector=query_embedding, top_k=top_k, filter=filters, include_metadata=True, namespace="ns0")
+        filter_query = filters if filters else {}
+        results = self.index.query(vector=query_embedding, top_k=top_k, filter=filter_query, include_metadata=True)
         return results["matches"]        
 
 
-
-def init_database():
-    index_name = "agentic-rag-small"
+def init_database_with_upsert():
+    index_name = "agentic-rag"
     dimension = 1024
 
     # Load the data
-    data_episodes_path = 'data-small/episodes-small.csv'
-    data_podcasts_path = 'data-small/podcasts-small.csv'
+    data_episodes_path = 'data/episodes.csv'
+    data_podcasts_path = 'data/podcasts.csv'
 
     model = AzureOpenAIModels()
     dataset = Dataset(model, data_episodes_path, data_podcasts_path)
@@ -204,12 +206,28 @@ def init_database():
     # Uncomment to create the index (only needs to be done once)
     # index.create_index()
 
-    #index.upsert_by_chunks(dataset.data_episodes)
-    #index.upsert_by_chunks(dataset.data_podcasts)
+    index.upsert_by_chunks(dataset.data_episodes)
+    index.upsert_by_chunks(dataset.data_podcasts)
+
+    return index, dataset, model
+
+
+def init_database():
+    index_name = "agentic-rag"
+    dimension = 1024
+
+    # Load the data
+    data_episodes_path = 'data/episodes.csv'
+    data_podcasts_path = 'data/podcasts.csv'
+
+    model = AzureOpenAIModels()
+    dataset = Dataset(model, data_episodes_path, data_podcasts_path)
+
+    index = Index(model, dataset, index_name, dimension, metric="cosine")
 
     return index, dataset, model
 
 
 if __name__ == "__main__":
-    init_database()
+    init_database_with_upsert()
         
