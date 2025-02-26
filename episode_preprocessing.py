@@ -9,34 +9,43 @@ def remove_timestamps(text):
 
 import re
 
+import re
+
 def clean_podcast_description(text):
     """Cleans a podcast description by removing timestamps, promotional content, social media handles, and unnecessary text."""
 
     # 1. Remove timestamps (e.g., "0:00", "11:45", "37:18")
     text = re.sub(r"\d{1,2}:\d{2}(\s?[APap][Mm])?", "", text)
 
-    # 2. Remove promotional sections based on common keywords
-    promo_keywords = ["SUBSCRIBE:", "FOLLOW US:", "OTHER SMOSHES:", "Tour Dates!", "Merch:", "By:", 
-                      "Gametime:", "ZocDoc:", "Valor Recovery:", "Music:", "Find Theo:", "GET IN TOUCH:", 
-                      "Referenced in the show", "Credit"]
-    text = re.split("|".join(promo_keywords), text, maxsplit=1)[0]
+    promo_keywords = [
+        "SUBSCRIBE:", "FOLLOW US:", "OTHER SMOSHES:", "Tour Dates!", "Merch:", "By:", 
+        "Gametime:", "ZocDoc:", "Valor Recovery:", "Music:", "Find Theo:", "GET IN TOUCH:", 
+        "Referenced in the show", "Credit", "Go See", "Watch .* on YouTube", "Support .* @",
+        "Get Merch @", "Download the .* app", "Visit .* today", "Use code .* for",
+        "Follow me on social media", "Follow", "Tik Tok:", "Instagram:", "Text .* to \d{3}-\d{3}-\d{4}",  # Added for phone numbers like 'Text PODCAST'
+        "PRE-ORDER .*", "THE VAULT", "BET-DAVID CONSULTING", "VALUETAINMENT UNIVERSITY",
+        "NOW AVAILABLE!", "WATCH US AT .*", ".*\.COM", "FREE breakfast for life", "Learn more about your ad choices",
+        "Subscribe to Save.*", "save \d+%", ".*% off", ".*subscription order", "Call \d{3}-\d{3}-\d{4}",  # Added for sales and phone numbers
+        ".*on Apple Podcasts", ".*on Spotify", ".*on Rumble", "Subscribe to .*", "Join .* on Locals"
+    ]
+    text = re.split("|".join(promo_keywords), text, maxsplit=1, flags=re.IGNORECASE)[0]
 
     # 3. Remove social media handles (e.g., @username) and hashtags (e.g., #ExampleHashtag)
     text = re.sub(r"@\w+", "", text)
     text = re.sub(r"#\w+", "", text)
 
-    # 4. Remove contact info (emails and phone numbers)
-    text = re.sub(r"\S+@\S+", "", text)  # Emails
-    text = re.sub(r"\b\d{5,}\b", "", text)  # Phone numbers (assumes long numbers)
+    # 4. Remove emails and websites
+    text = re.sub(r"\S+@\S+", "", text)  # Remove emails
+    text = re.sub(r"https?://\S+", "", text)  # Remove URLs
 
-    # 5. Remove unnecessary references (e.g., "If you enjoy X, you’ll enjoy Y")
-    text = re.sub(r"If you enjoy.*", "", text)
+    # 5. Remove call-to-action phrases (e.g., "send an email to", "Support this podcast")
+    text = re.sub(r"send an email to.*", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"Support this podcast.*", "", text, flags=re.IGNORECASE)
 
     # 6. Remove excessive whitespace
     text = re.sub(r"\s+", " ", text).strip()
 
     return text
-
 
 def preprocess_episodes():
     df = pd.read_csv("top_podcasts.csv")
