@@ -55,7 +55,7 @@ class AzureOpenAIModels:
             azure_deployment=EMBEDDING_DEPLOYMENT,
             api_key=AZURE_OPENAI_API_KEY,
             azure_endpoint=AZURE_ENDPOINT,
-            openai_api_version="2023-05-15",
+            openai_api_version=API_VERSION,
             openai_api_type="azure",
             dimensions = 1024, # Can specify dimensions with new text-embedding-3 models
         )
