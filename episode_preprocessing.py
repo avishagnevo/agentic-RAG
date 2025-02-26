@@ -7,10 +7,6 @@ def remove_timestamps(text):
     cleaned_text = re.sub(pattern, '', text).strip()
     return cleaned_text
 
-import re
-
-import re
-
 def clean_podcast_description(text):
     """Cleans a podcast description by removing timestamps, promotional content, social media handles, and unnecessary text."""
 
@@ -21,7 +17,7 @@ def clean_podcast_description(text):
         "SUBSCRIBE:", "FOLLOW US:", "OTHER SMOSHES:", "Tour Dates!", "Merch:", "By:", 
         "Gametime:", "ZocDoc:", "Valor Recovery:", "Music:", "Find Theo:", "GET IN TOUCH:", 
         "Referenced in the show", "Credit", "Go See", "Watch .* on YouTube", "Support .* @",
-        "Get Merch @", "Download the .* app", "Visit .* today", "Use code .* for",
+        "Get Merch @", "Download the .* app", "Use code .* for", "visit",
         "Follow me on social media", "Follow", "Tik Tok:", "Instagram:", "Text .* to \d{3}-\d{3}-\d{4}",  # Added for phone numbers like 'Text PODCAST'
         "PRE-ORDER .*", "THE VAULT", "BET-DAVID CONSULTING", "VALUETAINMENT UNIVERSITY",
         "NOW AVAILABLE!", "WATCH US AT .*", ".*\.COM", "FREE breakfast for life", "Learn more about your ad choices",
@@ -48,7 +44,7 @@ def clean_podcast_description(text):
     return text
 
 def preprocess_episodes():
-    df = pd.read_csv("top_podcasts.csv")
+    df = pd.read_csv("top_podcasts.csv", encoding="utf-8-sig")
     df['id'] = 'e' + (df.index + 1).astype(str)
 
     # Filter regions
@@ -110,11 +106,20 @@ def preprocess_episodes():
 
     # Filter out rows where the word count is less than 5
     df = df[df['word_count'] >= 5]
-
-    # Optionally, drop the 'word_count' column if you no longer need it
     df = df.drop(columns=['word_count'])
 
-    df.to_csv('preprocessed_episodes.csv')
+    def replace_smart_quotes(text):
+        # Replace typographic apostrophes and quotes with ASCII equivalents
+        text = text.replace(u"\u2019", "'")
+        text = text.replace(u"\u2018", "'")
+        text = text.replace(u"\u201C", '"')
+        text = text.replace(u"\u201D", '"')
+        return text
+
+    df["description"] = df["description"].astype(str).apply(replace_smart_quotes)
+    df["show.description"] = df["show.description"].astype(str).apply(replace_smart_quotes)
+
+    df.to_csv("preprocessed_episodes.csv", encoding="utf-8-sig", index=False)
     print(df.columns)
 
 if __name__ == "__main__":
