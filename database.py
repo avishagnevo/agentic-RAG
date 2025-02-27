@@ -33,10 +33,10 @@ class Dataset:
     """
     Handles all operations related to dataset management, including building, upserting, deleting, and retrieving data.
     """
-    def __init__(self, model, data_episodes_path, data_podcasts_path):
+    def __init__(self, model, data_episodes_path = None, data_podcasts_path = None):
         self.model = model
-        self.data_episodes = pd.read_csv(data_episodes_path, header=0)
-        self.data_podcasts = pd.read_csv(data_podcasts_path, header=0)
+        self.data_episodes = pd.read_csv(data_episodes_path, header=0) if data_episodes_path is not None else None
+        self.data_podcasts = pd.read_csv(data_podcasts_path, header=0) if data_podcasts_path is not None else None
 
 
     def get_metadata(self, entry_id):
@@ -49,15 +49,15 @@ class Dataset:
         metadata = {}
 
         if entry_id.startswith('p'):
-            entry=self.data_podcasts[self.data_podcasts['id'] == entry_id].iloc[0]            
+            entry=self.data_podcasts[self.data_podcasts['id'] == entry_id].iloc[0]
             metadata['dataset'] = 'podcasts'
             metadata['title'] = entry['title']
-            metadata['description'] = entry['description']    
+            metadata['description'] = entry['description']
             metadata['rating'] = float(entry['average_rating'])
             metadata['category'] = entry['category']
             metadata['itunes_url'] = entry['itunes_url']
             #itunes_url,title,description,average_rating,category,id,to_embed
-        
+
         elif entry_id.startswith('e'):
             entry=self.data_episodes[self.data_episodes['id'] == entry_id].iloc[0]
             metadata['dataset'] = 'episodes'
@@ -69,9 +69,9 @@ class Dataset:
             #id,episodeUri,showUri,episodeName,description,show.name,show.description,show.publisher,duration_ms,to_embed
 
         else:
-            raise ValueError(f"Invalid dataset. Choose from 'episodes' or 'podcasts'")    
+            raise ValueError(f"Invalid dataset. Choose from 'episodes' or 'podcasts'")
 
-        return metadata    
+        return metadata
 
 
 class Index:
@@ -160,10 +160,10 @@ class Index:
 
             self.add_to_index(data, embeddings)
             # Sleep for 0.5 second
-            time.sleep(0.2)    
+            time.sleep(0.2)
 
-            print(f"Dataset[{i}:{j}] added to the Pinecone index!")        
-         
+            print(f"Dataset[{i}:{j}] added to the Pinecone index!")
+
 
 
     def chunks(self, iterable, batch_size=200):
@@ -183,12 +183,12 @@ class Index:
     def retrieve_data(self, query_embedding, top_k=5, filters=None):
         """Performs semantic search with metadata filtering."""
         filter_query = filters if filters else {}
-        results = self.index.query(vector=query_embedding, top_k=top_k, filter=filter_query, include_metadata=True)
-        return results["matches"]        
+        results = self.index.query(vector=query_embedding, top_k=top_k, filter=filter_query, include_metadata=True, namespace="ns0")
+        return results["matches"]
 
 
 def init_database_with_upsert():
-    index_name = "agentic-rag"
+    index_name = INDEX_NAME
     dimension = 1024
 
     # Load the data
@@ -210,21 +210,16 @@ def init_database_with_upsert():
 
 
 def init_database():
-    index_name = "agentic-rag"
+    index_name = INDEX_NAME
     dimension = 1024
 
-    # Load the data
-    data_episodes_path = 'data/episodes.csv'
-    data_podcasts_path = 'data/podcasts.csv'
-
     model = AzureOpenAIModels()
-    dataset = Dataset(model, data_episodes_path, data_podcasts_path)
+    dataset = Dataset(model)
 
     index = Index(model, dataset, index_name, dimension, metric="cosine")
 
     return index, dataset, model
 
 
-if __name__ == "__main__":
-    init_database_with_upsert()
-        
+# if __name__ == "__main__":
+#     init_database_with_upsert()

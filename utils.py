@@ -87,7 +87,7 @@ def check_selector_output(podcast_selection, search_results, search_filters):
         podcast_selection_clean = podcast_selection.strip()
         # Attempt to load the plain list (e.g., ["p2"]) directly
         selected_ids = json.loads(podcast_selection_clean)
-        if not isinstance(selected_ids, list) or len(selected_ids) != search_filters["recommendation_amount"]:
+        if not isinstance(selected_ids, list) or len(selected_ids) > search_filters["recommendation_amount"]:
             raise ValueError("Invalid podcast selection.")
     except Exception as ex:
         print("Error with Selector agent output:", ex)

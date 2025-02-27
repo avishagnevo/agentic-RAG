@@ -26,7 +26,7 @@ class AgenticPipeline:
             "ResponseGeneration": Agent("ResponseGeneration", "structured", "InstructionBased"),
             "Supervision": Agent("Supervision", "structured", "PersonaPattern"),
         }
-    
+
     def execute(self, user_query):
         """
         Runs the full agentic pipeline, ensuring each step feeds into the next logically.
@@ -45,11 +45,9 @@ class AgenticPipeline:
 
         # User Input Processing
         processed_input = user_query # TODO Implement a function, should be handled without an agant
-        # print("Processed Input:", processed_input)
-        
+
         # Index Filters Extraction
         search_filters = self.agents["SearchFilters"].run(processed_input) #should return an output like a Pinecone filter
-        print(search_filters)
         search_filters = utils.check_search_filters(search_filters)
 
         print("Search Filters:", search_filters)
@@ -64,6 +62,7 @@ class AgenticPipeline:
         query_embedding = self.embedding_model.get_query_embedding(needs_summary)
         search_results = self.index.retrieve_data(query_embedding, top_k=3 * search_filters["recommendation_amount"],
                                                   filters=search_filters["Pinecone Format"])
+        print("Search Results:", search_results)
 
         # Augmented Prompt Construction
         augmented_prompt = {
@@ -82,39 +81,42 @@ class AgenticPipeline:
 
         selected_ids = utils.check_selector_output(podcast_selection, search_results, search_filters)
 
+        print("Selected IDs:", selected_ids)
+
 
         selected_data = []
         for result in search_results:
             if result["id"] in selected_ids:
-                title = result["metadata"].get("title", result["metadata"].get("episodeName", ""))
-                entry = {
-                    "id": result["id"],
-                    "title": title,
-                    "text": result["metadata"].get("text", "")
-                }
+                entry = { }
                 # For episodes, include duration_min; for podcasts, include itunes_url if available.
                 if result["metadata"].get("dataset", "") == "episodes":
+                    entry["Title"] = result["metadata"].get("episode_name", "")
+                    entry["description"] = result["metadata"].get("episode_description", "")
+                    # entry["URL"] = result["metadata"].get("episodeUri", "") # TODO upload the URLS
+                    entry["URL"] = "Not provided" # TODO upload the URLS
                     entry["duration_min"] = result["metadata"].get("duration_min", None)
+                    entry["Type"] = "Episode"
+                    print("Episode URL:", entry["URL"])
                 else:
-                    entry["itunes_url"] = result["metadata"].get("itunes_url", "")
+                    entry["Title"] = result["metadata"].get("title", "")
+                    entry["description"] = result["metadata"].get("description", "")
+                    entry["URL"] = result["metadata"].get("itunes_url", "")
+                    entry["Type"] = "Podcast"
+                    print("URL:", entry["URL"])
                 selected_data.append(entry)
-
-        # Convert the selected data into a JSON string for the agent
-        response_input = json.dumps(selected_data)
+        print("Selected Data:", selected_data)
 
         # Run the ResponseGeneration agent with the constructed input
-        response = self.agents["ResponseGeneration"].run(response_input)
+        response = self.agents["ResponseGeneration"].run(selected_data)
 
         print("Generated Response:", response)
 
 
         # Supervision & Refinement
-        final_response = self.agents["Supervision"].run("original_prompt: "+ str(user_query) +
+        final_response = self.agents["Supervision"].run("original_prompt: " + str(user_query) +
                                                         "\n" + "final_response: " + str(response))
         print("Final Validated Response:", final_response)
 
-        #maybe only if PASS then return final_response, otherwise do something else
-        
         return final_response
 
 def initialize_index():
@@ -142,9 +144,12 @@ def interactive_conversation(index, dataset, embedding_model):
         # user_input = input("Enter your request: ") # TODO uncomment this line when finished testing
         # user_prompt = "Find me top Data Science podcasts."
         #     # user_prompt = "I love eating pizza"
-        #     # user_prompt = "I want knowledge on karate"
-        #     # user_prompt = "Help me to learn coding in my coffee break tomorrow"
-        user_input = "I want one podcast about photography"
+        user_input = "I want knowledge on karate"
+        # user_input = "I want one podcast about photography"
+        # user_input = "Help me to learn coding in my coffee break tomorrow"
+        # user_input = "I want to hear about the history of israel"
+        # user_input = "I've just adopted a new puppy and I want to learn how to train it, and all the important things I need to know about raising a puppy. I'm looking for something short"
+        # user_input = "I want to learn about the october 7th massacre"
 
         if user_input.lower() in ['exit', 'quit']:
             print("Goodbye!")
@@ -168,6 +173,7 @@ def interactive_conversation(index, dataset, embedding_model):
 if __name__ == "__main__":
     index, dataset, embedding_model = initialize_index()
     interactive_conversation(index, dataset, embedding_model)
+
 
 # if __name__ == "__main__":
 #     # user_prompt = "Find me top Data Science podcasts."
