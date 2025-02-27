@@ -71,8 +71,6 @@ class Dataset:
         else:
             raise ValueError(f"Invalid dataset. Choose from 'episodes' or 'podcasts'")    
 
-        print(metadata)
-
         return metadata    
 
 
@@ -159,7 +157,6 @@ class Index:
             # Embedding model to generate embeddings for the texts
             data_to_embed = [d for d in data['to_embed']]
             embeddings = self.model.get_docs_embedding(data_to_embed)
-            print('embedding dim:', len(embeddings[0]))
 
             self.add_to_index(data, embeddings)
             # Sleep for 0.5 second
