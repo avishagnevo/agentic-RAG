@@ -12,7 +12,7 @@ class Agent:
         with open("agent_templates.json", "r") as file:
             agents_data = json.load(file)
 
-        self.AGENT_NAMES = agents_data.keys()  # Should print all agent names
+        self.AGENT_NAMES = agents_data.keys()
 
         if name not in self.AGENT_NAMES:
             raise ValueError(f"Invalid agent type. Choose from {self.AGENT_NAMES}")
@@ -42,6 +42,4 @@ class Agent:
             import base64
             formatted_prompt = base64.b64encode(formatted_prompt.encode()).decode()
             agent_output = self.model.get_chat_response(self.system_prompt_template, formatted_prompt)
-            print("Error in agent execution. Trying base64 encoding.")
-            print(agent_output)
         return agent_output

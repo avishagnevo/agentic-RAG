@@ -1,8 +1,8 @@
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 import utils
 from agent import Agent
 import database
-import json
-import re
 
 
 class AgenticPipeline:
@@ -35,7 +35,6 @@ class AgenticPipeline:
 
         # Database Selection
         query_pass = self.agents["QueryInitialCheck"].run(user_query) #should return an output like a Pinecone filter
-        print(query_pass)
         query_pass_dict = utils.check_query_pass(query_pass)
 
         if query_pass_dict["pass"] == False:
@@ -43,26 +42,17 @@ class AgenticPipeline:
                        " helping us to chose your desired podcast.\nAgent reason:\n" + query_pass_dict["reason"])
 
 
-        # User Input Processing
-        processed_input = user_query # TODO Implement a function, should be handled without an agant
-
         # Index Filters Extraction
-        search_filters = self.agents["SearchFilters"].run(processed_input) #should return an output like a Pinecone filter
+        search_filters = self.agents["SearchFilters"].run(user_query) #should return an output like a Pinecone filter
         search_filters = utils.check_search_filters(search_filters)
 
-        print("Search Filters:", search_filters)
-
-
         # Need Understanding
-        needs_summary = self.agents["NeedUnderstanding"].run(processed_input)
-        print("Needs Summary:", needs_summary)
-
+        needs_summary = self.agents["NeedUnderstanding"].run(user_query)
 
         # Semantic Search using Pinecone
         query_embedding = self.embedding_model.get_query_embedding(needs_summary)
         search_results = self.index.retrieve_data(query_embedding, top_k=3 * search_filters["recommendation_amount"],
                                                   filters=search_filters["Pinecone Format"])
-        print("Search Results:", search_results)
 
         # Augmented Prompt Construction
         augmented_prompt = {
@@ -71,17 +61,12 @@ class AgenticPipeline:
                 for podcast in search_results
             ],
             "recommendation_amount": search_filters["recommendation_amount"],
-            "processed_input": processed_input,
+            "user_query": user_query,
             "needs_summary": needs_summary
         }
 
-        print("Augmented Prompt:", augmented_prompt)
-
         podcast_selection = self.agents["Selector"].run(augmented_prompt)
-
         selected_ids = utils.check_selector_output(podcast_selection, search_results, search_filters)
-
-        print("Selected IDs:", selected_ids)
 
 
         selected_data = []
@@ -92,30 +77,22 @@ class AgenticPipeline:
                 if result["metadata"].get("dataset", "") == "episodes":
                     entry["Title"] = result["metadata"].get("episode_name", "")
                     entry["description"] = result["metadata"].get("episode_description", "")
-                    # entry["URL"] = result["metadata"].get("episodeUri", "") # TODO upload the URLS
-                    entry["URL"] = "Not provided" # TODO upload the URLS
+                    entry["URL"] = result["metadata"].get("episode_url", "")
                     entry["duration_min"] = result["metadata"].get("duration_min", None)
                     entry["Type"] = "Episode"
-                    print("Episode URL:", entry["URL"])
                 else:
                     entry["Title"] = result["metadata"].get("title", "")
                     entry["description"] = result["metadata"].get("description", "")
                     entry["URL"] = result["metadata"].get("itunes_url", "")
                     entry["Type"] = "Podcast"
-                    print("URL:", entry["URL"])
                 selected_data.append(entry)
-        print("Selected Data:", selected_data)
 
         # Run the ResponseGeneration agent with the constructed input
         response = self.agents["ResponseGeneration"].run(selected_data)
 
-        print("Generated Response:", response)
-
-
         # Supervision & Refinement
         final_response = self.agents["Supervision"].run("original_prompt: " + str(user_query) +
                                                         "\n" + "final_response: " + str(response))
-        print("Final Validated Response:", final_response)
 
         return final_response
 
@@ -127,60 +104,22 @@ def initialize_index():
     return index, dataset, embedding_model
 
 def run_pipeline(index, dataset, embedding_model, user_prompt):
-    # Initialize and execute the pipeline
     pipeline = AgenticPipeline(index, dataset, embedding_model)
     final_output = pipeline.execute(user_prompt)
-    print(f"\n\n\n\n\n##########################################################################")
+    print(f"\n##########################################################################\n")
     print(final_output)
-
-
-def interactive_conversation(index, dataset, embedding_model):
-    pipeline = AgenticPipeline(index, dataset, embedding_model)
-    conversation_history = ""  # store all conversation turns as a single string
-    print(
-        "Welcome to the Podcast Recommender! Feel free to ask for new podcasts or request explanations on previous recommendations. Type 'exit' to quit.")
-
-    while True:
-        # user_input = input("Enter your request: ") # TODO uncomment this line when finished testing
-        # user_prompt = "Find me top Data Science podcasts."
-        #     # user_prompt = "I love eating pizza"
-        user_input = "I want knowledge on karate"
-        # user_input = "I want one podcast about photography"
-        # user_input = "Help me to learn coding in my coffee break tomorrow"
-        # user_input = "I want to hear about the history of israel"
-        # user_input = "I've just adopted a new puppy and I want to learn how to train it, and all the important things I need to know about raising a puppy. I'm looking for something short"
-        # user_input = "I want to learn about the october 7th massacre"
-
-        if user_input.lower() in ['exit', 'quit']:
-            print("Goodbye!")
-            break
-
-        # Append the new user input to the conversation history.
-        conversation_history += "\nUser: " + user_input
-
-        # Pass the full conversation history to the pipeline so the agents have the full context.
-        final_output = pipeline.execute(conversation_history)
-
-        # Append the agent's reply to the conversation history.
-        conversation_history += "\nAgent: " + final_output
-
-        print(f"\n\n\n\n\n##########################################################################")
-        # Display the agent's response.
-        print(final_output)
-        break
+    print(f"\n##########################################################################")
 
 
 if __name__ == "__main__":
+    user_input = "Find me top Data Science podcasts."
+    # user_input = "I want one podcast about photography"
+    # user_input = "I want knowledge on karate"
+    # user_input = "I love eating pizza"
+    # user_input = "I want to hear about the history of israel"
+    # user_input = "I want podcast that will teach me how to rob a bank"
+    # user_input = "I've just adopted a new puppy and I want to learn how to train it, and all the important things I need to know about raising a puppy"
+    # user_input = "I want one episode about Elon Musk"
+
     index, dataset, embedding_model = initialize_index()
-    interactive_conversation(index, dataset, embedding_model)
-
-
-# if __name__ == "__main__":
-#     # user_prompt = "Find me top Data Science podcasts."
-#     # user_prompt = "I love eating pizza"
-#     # user_prompt = "I want knowledge on karate"
-#     # user_prompt = "Help me to learn coding in my coffee break tomorrow"
-#     user_prompt = "I want one podcast about photography"
-#
-#     index, dataset, embedding_model = initialize_index()
-#     run_pipeline(index, dataset, embedding_model, user_prompt)
+    run_pipeline(index, dataset, embedding_model, user_input)

@@ -1,14 +1,14 @@
 {
+
     "QueryInitialCheck": {
-        "SYSTEM_PROMPT_TEMPLATES": {
-            "unstructured": "You are a helpful assistant.",
-            "structured": "You are a helpful assistant that determines if a user prompt is related to a podcast search task. Analyze the input and output strictly in valid JSON format following this schema: {{ pass: boolean, reason: string }}. If the input clearly specifies a search for podcasts, podcast shows, episodes, or any audio content (for example, using phrases like 'hear' or 'listen'), return pass as true with a brief explanation. Minor spelling errors or typos should be tolerated if the intended meaning is clear. Otherwise, return pass as false with a concise explanation of what additional information is needed. Do not include any markdown formatting, code blocks, or any text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."},
-        "PROMPT_TEMPLATES": {
-            "InstructionBased": "Evaluate if the following input is related to a podcast search task. Provide your output in JSON format. Input: {input}",
-            "FewShot": "Example 1: Input: Find some history podcasts about World War II. Output: {{ pass: true, reason: User clearly seeks history podcasts about World War II. }}\n Example 2: Input: I need something to listen to. Output: {{ pass: false, reason: The prompt is too vague; it does not specify a podcast search. }}\n Example 3: Input: I really want to here about RAG. Output: {{ pass: true, reason: The query implies a search for audio content related to RAG, despite a minor typo. }}\nNow Evaluate: {input}.\nThe JSON you return must be ready to be delivered directly to the user as feedback.",
-            "ChainOfThoughts": "For the given user input: {input}, determine if it requests podcasts, podcast shows, episodes, or other audio content. If yes, return {{ pass: true, reason: Query relates to a podcast search or audio content. }} If not, return {{ pass: false, reason: Additional details needed to confirm podcast search intent. }}.",
-            "AudiencePattern": "Assume the user is seeking podcasts. Evaluate the query: {input} and output a JSON object with a boolean 'pass' and a concise explanation in 'reason'.",
-            "QuestionRefinementPattern": "Check if the following input: {input} clearly indicates a search for podcasts, shows, episodes, or audio content. Return your result in JSON format with a boolean 'pass' and a short explanation in 'reason'." } },
+    "SYSTEM_PROMPT_TEMPLATES": {
+        "unstructured": "You are a helpful assistant.",
+        "structured": "You are a helpful assistant that determines if a user prompt is related to a podcast search task. Analyze the input and output strictly in valid JSON format following this schema: {{ pass: boolean, reason: string }}. If the input clearly specifies a search for podcasts, podcast shows, episodes, or any audio content (for example, using phrases like 'hear' or 'listen') and does not contain sensitive topics such as hate, jailbreak, self-harm, sexual content, or violence, return pass as true with a brief explanation. However, if the input includes any of these sensitive topics, return pass as false with a friendly explanation such as: 'Your query contains content that cannot be processed due to our API safety policies. Please modify your query and try again.' Minor spelling errors or typos should be tolerated if the intended meaning is clear. Do not include any markdown formatting, code blocks, or any text outside of the JSON. Ensure the JSON is valid and does not contain comments or trailing commas."
+    },
+    "PROMPT_TEMPLATES": {
+        "FewShot": "Example 1: Input: Find some history podcasts about World War II. Output: {{ pass: true, reason: 'User clearly seeks history podcasts about World War II.' }}\nExample 2: Input: I need something to listen to. Output: {{ pass: false, reason: 'The prompt is too vague; it does not specify a podcast search.' }}\nExample 3: Input: I really want to here about RAG. Output: {{ pass: true, reason: 'The query implies a search for audio content related to RAG, despite a minor typo.' }}\nExample 4: Input: I want to hear a graphic violent story about murder and torture. Output: {{ pass: false, reason: 'Your query contains content that cannot be processed due to our API safety policies. Please modify your query and try again.' }}\nNow Evaluate: {input}.\nThe JSON you return must be ready to be delivered directly to the user as feedback."
+    }
+    },
 
 
     "SearchFilters": {

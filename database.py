@@ -1,17 +1,10 @@
 import time
-import os
 import pandas as pd
 import pinecone
 import json
 import itertools
-from openai import AzureOpenAI
-from langchain.vectorstores import Pinecone
-from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.chat_models import AzureChatOpenAI
-from langchain.prompts import ChatPromptTemplate
-from langchain.schema import HumanMessage
+from langchain_community.vectorstores import Pinecone
 from langchain.chains import SimpleSequentialChain
-from langchain.memory import ConversationBufferMemory
 from pinecone import Pinecone, ServerlessSpec
 from llms import AzureOpenAIModels
 

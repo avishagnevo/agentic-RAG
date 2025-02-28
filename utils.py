@@ -26,7 +26,6 @@ def check_search_filters(search_filters):
         keys_checker = [search_filters["dataset"], search_filters["recommendation_amount"],
                         search_filters["duration_range"]]
     except:
-        print("Not json format")
         try: # try dict format
             # Insert quotes around keys: match word characters before a colon.
             fixed_str = re.sub(r"(\w+)\s*:", r'"\1":', search_filters)
@@ -40,7 +39,6 @@ def check_search_filters(search_filters):
         except:
             search_filters = {"dataset": "both", "recommendation_amount": 3,
                           "duration_range": "not_limited"}
-            print("Agent failed to parse search filters, using default values.")
 
     if search_filters["duration_range"] == "short":
         search_filters["range"] = [0, 15]
@@ -90,10 +88,8 @@ def check_selector_output(podcast_selection, search_results, search_filters):
         if not isinstance(selected_ids, list) or len(selected_ids) > search_filters["recommendation_amount"]:
             raise ValueError("Invalid podcast selection.")
     except Exception as ex:
-        print("Error with Selector agent output:", ex)
         # Fallback: sort search_results by score and select the top IDs accordingly
         sorted_results = sorted(search_results, key=lambda x: x.get("score", 0), reverse=True)
         selected_ids = [result["id"] for result in sorted_results[:search_filters["recommendation_amount"]]]
-        print("Fallback selected IDs based on score:", selected_ids)
 
     return selected_ids
