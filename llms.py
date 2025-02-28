@@ -10,16 +10,6 @@ from langchain.schema import HumanMessage
 from langchain.chains import SimpleSequentialChain
 from langchain.memory import ConversationBufferMemory
 
-
-'''
-o3-mini version 2025-01-31
-o1 version: 2024-12-17
-gpt-4o-mini version: 2024-07-18
-gpt-4o version: 2024-08-06
-gpt-4o version: 2024-11-20
-'''
-
-
 # Open and load the configuration file
 with open("keys.json", "r") as config_file:
     config = json.load(config_file)
@@ -63,8 +53,7 @@ class AzureOpenAIModels:
     def get_docs_embedding(self, docs : list[str]) -> list[list[float]]:
         """Generates an embedding for the given list of texts using Azure OpenAI."""
         docs_embeddings = self.embedding_model.embed_documents(docs)
-        print(docs_embeddings[0][:10])  # Show the first 10 characters of the first vector
-
+        
         return docs_embeddings
 
     def get_query_embedding(self, query : str) -> list[float]:
