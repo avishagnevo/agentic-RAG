@@ -66,10 +66,12 @@ class Dataset:
             metadata['episode_description'] = entry['description']
             metadata['show_description'] = entry['show.description']
             metadata['duration_min'] = int(entry['duration_ms'])
+            metadata['episode_url'] = entry['episodeUri']
+            metadata['show_url'] = entry['showUri']
             #id,episodeUri,showUri,episodeName,description,show.name,show.description,show.publisher,duration_ms,to_embed
 
         else:
-            raise ValueError(f"Invalid dataset. Choose from 'episodes' or 'podcasts'")
+            raise ValueError(f"Invalid dataset. Choose from 'episodes' or 'podcasts'") 
 
         return metadata
 
@@ -142,6 +144,18 @@ class Index:
             })
         self.index.upsert(vectors=vectors, namespace="ns0")
 
+    def remove_from_index(self, prefix):
+        """
+        Removing items from index, by prefix.
+        :param prefix:
+        :return:
+        """
+        remove_list = self.index.list(prefix=prefix, namespace='ns0')
+        for ids in remove_list:
+            self.index.delete(ids=ids, namespace='ns0')
+            print('IDs removed from index : ',ids)
+
+
     def upsert_by_chunks(self, dataset):
         """
         Upsert data in chunks
@@ -204,7 +218,7 @@ def init_database_with_upsert():
     # index.create_index()
 
     index.upsert_by_chunks(dataset.data_episodes)
-    index.upsert_by_chunks(dataset.data_podcasts)
+    #index.upsert_by_chunks(dataset.data_podcasts)
 
     return index, dataset, model
 
@@ -218,8 +232,10 @@ def init_database():
 
     index = Index(model, dataset, index_name, dimension, metric="cosine")
 
-    return index, dataset, model
+    return index, dataset, model    
 
 
-# if __name__ == "__main__":
-#     init_database_with_upsert()
+if __name__ == "__main__":
+    init_database_with_upsert()
+    #index, dataset, model = init_database()
+    #index.remove_from_index('e')
