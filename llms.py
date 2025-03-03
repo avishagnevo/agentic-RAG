@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 import json
 import pandas as pd
 import pinecone
@@ -10,16 +11,13 @@ from langchain.schema import HumanMessage
 from langchain.chains import SimpleSequentialChain
 from langchain.memory import ConversationBufferMemory
 
-# Open and load the configuration file
-with open("keys.json", "r") as config_file:
-    config = json.load(config_file)
-
-AZURE_OPENAI_API_KEY = config["AZURE_OPENAI_API_KEY"]
-AZURE_ENDPOINT = config["AZURE_ENDPOINT"]
-API_VERSION = config["API_VERSION"]
-CHAT_DEPLOYMENT = config["CHAT_DEPLOYMENT"]
-EMBEDDING_DEPLOYMENT = config["EMBEDDING_DEPLOYMENT"]
-
+# Hard coded config values
+load_dotenv() # Load environment variables from .env file
+AZURE_OPENAI_API_KEY = os.getenv("API_KEY")
+AZURE_ENDPOINT = "https://096290-oai.openai.azure.com"
+API_VERSION = "2024-02-01"
+CHAT_DEPLOYMENT = "team2-gpt4o"
+EMBEDDING_DEPLOYMENT = "team2-embedding"
 
 class AzureOpenAIModels:
     """

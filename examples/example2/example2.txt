@@ -1,0 +1,15 @@
+Prompt: "give me episodes about israel and tell me how long they are"
+
+Agent Output: "It sounds like you're interested in podcasts with episodes focusing on Israel. Great choice! Here are some episodes that match your request, complete with their durations and direct links for easy access:
+
+Israel is on a state of high alert on the first anniversary of the Hamas attacks. This episode covers the ongoing Israeli offensive against Hamas in Gaza and Hezbollah in Lebanon, including massive explosions in southern Beirut. It lasts 32 minutes. You can listen to it here: https://open.spotify.com/episode/70TSGV1CqbHi1KsSjXOSZL  
+
+Israel blockades part of northern Gaza. This episode discusses Israel's blockade of northern Gaza and its impact on ceasefire hopes following the killing of a Hamas leader. It lasts 29 minutes. Listen to it here: https://open.spotify.com/episode/7wcf5MRpvc0vEBg9DJMosa  
+
+Israel carries out 'extensive' strikes in Lebanon as Hezbollah fires at Tel Aviv. This episode provides updates on the situation in southern Lebanon, along with international reactions. It lasts 35 minutes. You can listen to it here: https://open.spotify.com/episode/0c6H7bBEGVbjqSTczcbuJY  
+
+Israel identifies 'Hezbollah bunker full of cash and gold' under Beirut hospital. This episode highlights Israel's claim of discovering a Hezbollah bunker beneath a Beirut hospital. It lasts 32 minutes. Listen here: https://open.spotify.com/episode/32xqxloMzB4PhyMRlJDCz5  
+
+Israeli expands ground offensive against Hezbollah. This episode discusses the IDF's deployment of a new division in southwest Lebanon. It lasts 29 minutes. You can listen to it here: https://open.spotify.com/episode/1Y9LVY7PD9mqyyntgnEZhO  
+
+I hope you find these podcast episodes insightful and engaging. Enjoy listening, and feel free to reach out if you'd like more recommendations. Happy exploring!"

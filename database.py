@@ -9,18 +9,10 @@ from pinecone import Pinecone, ServerlessSpec
 from llms import AzureOpenAIModels
 
 
-with open("keys.json", "r") as config_file:
-    config = json.load(config_file)
+# Hard coded config values
+PINECONE_API_KEY = "pcsk_6EBf1L_AEm1eAcuU5QfvbWgVfaMuc1LUaBUwHPkY3RbNwJPK8UusyVHeh3yKpK7V8qZi5s"
+INDEX_NAME = "agentic-rag"
 
-PINECONE_API_KEY = config["PINECONE_API_KEY"]
-PINECONE_ENV = config["PINECONE_ENV"]
-INDEX_NAME = config["INDEX_NAME"]
-
-
-
-# Initialize Pinecone
-# pinecone.init(api_key=PINECONE_API_KEY, environment=PINECONE_ENV)
-# index = pinecone.Index(INDEX_NAME)
 
 class Dataset:
     """

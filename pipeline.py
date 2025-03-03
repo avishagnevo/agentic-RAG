@@ -59,6 +59,10 @@ class AgenticPipeline:
             "search_results": [
                 {"id": podcast["id"], "text": podcast["metadata"].get("text", "")}
                 for podcast in search_results
+            ] if 'dataset' in search_filters["Pinecone Format"].keys() and search_filters["Pinecone Format"]['dataset']['$eq'] != 'episodes' else
+            [
+                {"id": podcast["id"], "text": podcast["metadata"].get("text", ""), "duration": podcast["metadata"].get("duration_min", "")}
+                for podcast in search_results
             ],
             "recommendation_amount": search_filters["recommendation_amount"],
             "user_query": user_query,
@@ -112,7 +116,15 @@ def run_pipeline(index, dataset, embedding_model, user_prompt):
 
 
 if __name__ == "__main__":
-    user_input = "Find me top Data Science podcasts."
+    print(
+        "Hello! I’m your AI-powered podcast recommendation agent. 🎧\n"
+        "I specialize in finding the best podcasts tailored to your interests. "
+        "Just tell me what you're looking for—whether it’s about tech, business, health, or any topic—and I'll curate the perfect list for you. "
+        "I also consider factors like your available time and specific preferences to provide the best experience.\n"
+        "Go ahead, enter a prompt like: 'Find me top Data Science podcasts.'\n"
+    )
+    user_input = input("Type here: ")
+    # user_input = "Find me top Data Science podcasts."
     # user_input = "I want one podcast about photography"
     # user_input = "I want knowledge on karate"
     # user_input = "I love eating pizza"
@@ -120,6 +132,5 @@ if __name__ == "__main__":
     # user_input = "I want podcast that will teach me how to rob a bank"
     # user_input = "I've just adopted a new puppy and I want to learn how to train it, and all the important things I need to know about raising a puppy"
     # user_input = "I want one episode about Elon Musk"
-
     index, dataset, embedding_model = initialize_index()
     run_pipeline(index, dataset, embedding_model, user_input)
