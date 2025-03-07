@@ -10,7 +10,7 @@ def check_query_pass(query_pass):
     """
     try:
         query_pass_dict = json.loads(re.sub(r"```json\n?|```", "", query_pass).strip())
-        keys_checker = [query_pass_dict["pass"], query_pass_dict["reason"]]
+        keys_checker = [query_pass_dict["pass"], query_pass_dict["reason"]] # check if keys exist - if not, will raise an exception
     except:
         query_pass_dict = {"pass": True, "reason": "agent failed to parse query"}
 
@@ -24,19 +24,20 @@ def check_search_filters(search_filters):
     try:
         search_filters = json.loads(re.sub(r"```json\n?|```", "", search_filters).strip())
         keys_checker = [search_filters["dataset"], search_filters["recommendation_amount"],
-                        search_filters["duration_range"]]
+                        search_filters["duration_range"]] # check if keys exist - if not, will raise an exception
     except:
         try: # try dict format
             # Insert quotes around keys: match word characters before a colon.
             fixed_str = re.sub(r"(\w+)\s*:", r'"\1":', search_filters)
-            # Insert quotes around unquoted string values if needed. This part can be trickier;
-            # for simplicity, assume that values like 'episodes' and 'not_limited' need quotes.
+            # Insert quotes around unquoted string values if needed.
+            # Assuming that values like 'episodes' and 'not_limited' need quotes.
             fixed_str = re.sub(r':\s*([a-zA-Z_]+)([,\}])', r': "\1"\2', fixed_str)
             search_filters = ast.literal_eval(fixed_str)
             keys_checker = [search_filters["dataset"],
                             search_filters["recommendation_amount"],
                             search_filters["duration_range"]]
         except:
+            # If the dict format also fails, return a default dict
             search_filters = {"dataset": "both", "recommendation_amount": 3,
                           "duration_range": "not_limited"}
 
@@ -51,11 +52,13 @@ def check_search_filters(search_filters):
     else:
         search_filters["range"] = [0, 1000]
 
+    # Limit the number of recommendations to 10
     if search_filters["recommendation_amount"] > 10:
         print(f"Our agent approximated your recommendation amount as {search_filters['recommendation_amount']},"
-              " but we can only provide up to 10 recommendations.")
+              " but we can only provide up to 10 recommendations due to budget constraints.")
         search_filters["recommendation_amount"] = 10
 
+    # Convert the dataset filter to the Pinecone format
     if search_filters["dataset"] == "podcast":
         search_filters["Pinecone Format"] = {"dataset": {"$eq": "podcasts"}}
     elif search_filters["dataset"] == "episodes":

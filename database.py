@@ -4,7 +4,6 @@ import pinecone
 import json
 import itertools
 from langchain_community.vectorstores import Pinecone
-from langchain.chains import SimpleSequentialChain
 from pinecone import Pinecone, ServerlessSpec
 from llms import AzureOpenAIModels
 
@@ -203,7 +202,7 @@ def init_database_with_upsert():
     # index.create_index()
 
     index.upsert_by_chunks(dataset.data_episodes)
-    #index.upsert_by_chunks(dataset.data_podcasts)
+    index.upsert_by_chunks(dataset.data_podcasts)
 
     return index, dataset, model
 
@@ -222,5 +221,3 @@ def init_database():
 
 if __name__ == "__main__":
     init_database_with_upsert()
-    #index, dataset, model = init_database()
-    #index.remove_from_index('e')

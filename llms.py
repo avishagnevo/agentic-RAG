@@ -1,17 +1,10 @@
 import os
 from dotenv import load_dotenv
-import json
-import pandas as pd
-import pinecone
-from openai import AzureOpenAI
-from langchain_community.vectorstores import Pinecone
 from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI
-from langchain.prompts import ChatPromptTemplate
-from langchain.schema import HumanMessage
 from langchain.chains import SimpleSequentialChain
-from langchain.memory import ConversationBufferMemory
 
-# Hard coded config values
+
+# Config values
 load_dotenv() # Load environment variables from .env file
 AZURE_OPENAI_API_KEY = os.getenv("API_KEY")
 AZURE_ENDPOINT = "https://096290-oai.openai.azure.com"
@@ -32,10 +25,6 @@ class AzureOpenAIModels:
             openai_api_type="azure",
             temperature=0.5,
             model=model_name,
-            # max_tokens=None,
-            # timeout=None,
-            # max_retries=2,
-            # model_version="0125",
         )
 
         self.embedding_model = AzureOpenAIEmbeddings(
@@ -45,7 +34,7 @@ class AzureOpenAIModels:
             azure_endpoint=AZURE_ENDPOINT,
             openai_api_version=API_VERSION,
             openai_api_type="azure",
-            dimensions = 1024, # Can specify dimensions with new text-embedding-3 models
+            dimensions = 1024, # 1024 for text-embedding-3-large
         )
 
     def get_docs_embedding(self, docs : list[str]) -> list[list[float]]:

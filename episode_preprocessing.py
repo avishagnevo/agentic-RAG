@@ -10,7 +10,7 @@ def remove_timestamps(text):
 def clean_podcast_description(text):
     """Cleans a podcast description by removing timestamps, promotional content, social media handles, and unnecessary text."""
 
-    # 1. Remove timestamps (e.g., "0:00", "11:45", "37:18")
+    # Remove timestamps
     text = re.sub(r"\d{1,2}:\d{2}(\s?[APap][Mm])?", "", text)
 
     promo_keywords = [
@@ -26,19 +26,19 @@ def clean_podcast_description(text):
     ]
     text = re.split("|".join(promo_keywords), text, maxsplit=1, flags=re.IGNORECASE)[0]
 
-    # 3. Remove social media handles (e.g., @username) and hashtags (e.g., #ExampleHashtag)
+    # Remove social media handles (e.g., @username) and hashtags (e.g., #ExampleHashtag)
     text = re.sub(r"@\w+", "", text)
     text = re.sub(r"#\w+", "", text)
 
-    # 4. Remove emails and websites
+    # Remove emails and websites
     text = re.sub(r"\S+@\S+", "", text)  # Remove emails
     text = re.sub(r"https?://\S+", "", text)  # Remove URLs
 
-    # 5. Remove call-to-action phrases (e.g., "send an email to", "Support this podcast")
+    # Remove call-to-action phrases (e.g., "send an email to", "Support this podcast")
     text = re.sub(r"send an email to.*", "", text, flags=re.IGNORECASE)
     text = re.sub(r"Support this podcast.*", "", text, flags=re.IGNORECASE)
 
-    # 6. Remove excessive whitespace
+    # Remove excessive whitespace
     text = re.sub(r"\s+", " ", text).strip()
 
     return text
@@ -119,8 +119,11 @@ def preprocess_episodes():
     df["description"] = df["description"].astype(str).apply(replace_smart_quotes)
     df["show.description"] = df["show.description"].astype(str).apply(replace_smart_quotes)
 
+    # Remove duplicate rows based on the 'to_embed' column
+    df = df.drop_duplicates(subset='to_embed')
+
     df.to_csv("preprocessed_episodes.csv", encoding="utf-8-sig", index=False)
-    print(df.columns)
+
 
 if __name__ == "__main__":
     preprocess_episodes()

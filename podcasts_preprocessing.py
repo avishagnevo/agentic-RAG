@@ -48,6 +48,7 @@ if __name__ == "__main__":
     podcasts = podcasts[['podcast_id', 'itunes_url', 'title', 'description', 'average_rating']].dropna()
     categories = categories[['podcast_id', 'category']].dropna()
     categories_groped = categories.groupby('podcast_id').agg({'category': lambda x: ', '.join(x)}).reset_index()
+
     # Merge categories for each podcast
     podcasts_merged = pd.merge(podcasts, categories_groped, on='podcast_id')
 

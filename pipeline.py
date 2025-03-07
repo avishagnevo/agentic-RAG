@@ -31,10 +31,9 @@ class AgenticPipeline:
         """
         Runs the full agentic pipeline, ensuring each step feeds into the next logically.
         """
-        print("Starting Agentic Pipeline Execution...")
 
         # Database Selection
-        query_pass = self.agents["QueryInitialCheck"].run(user_query) #should return an output like a Pinecone filter
+        query_pass = self.agents["QueryInitialCheck"].run(user_query)
         query_pass_dict = utils.check_query_pass(query_pass)
 
         if query_pass_dict["pass"] == False:
@@ -43,13 +42,14 @@ class AgenticPipeline:
 
 
         # Index Filters Extraction
-        search_filters = self.agents["SearchFilters"].run(user_query) #should return an output like a Pinecone filter
+        search_filters = self.agents["SearchFilters"].run(user_query)
         search_filters = utils.check_search_filters(search_filters)
 
-        # Need Understanding
+        # Summarization of User Needs
         needs_summary = self.agents["NeedUnderstanding"].run(user_query)
 
-        # Semantic Search using Pinecone
+        # Semantic Search using Pinecone, get 3 times the recommendation amount to account for filtering
+        # search_filters["Pinecone Format"] is a dictionary that contains the filters in the format required by Pinecone
         query_embedding = self.embedding_model.get_query_embedding(needs_summary)
         search_results = self.index.retrieve_data(query_embedding, top_k=3 * search_filters["recommendation_amount"],
                                                   filters=search_filters["Pinecone Format"])
@@ -74,10 +74,10 @@ class AgenticPipeline:
 
 
         selected_data = []
+        # Construct the final output data based on the selected podcast IDs
         for result in search_results:
             if result["id"] in selected_ids:
                 entry = { }
-                # For episodes, include duration_min; for podcasts, include itunes_url if available.
                 if result["metadata"].get("dataset", "") == "episodes":
                     entry["Title"] = result["metadata"].get("episode_name", "")
                     entry["description"] = result["metadata"].get("episode_description", "")
@@ -91,7 +91,7 @@ class AgenticPipeline:
                     entry["Type"] = "Podcast"
                 selected_data.append(entry)
 
-        # Run the ResponseGeneration agent with the constructed input
+        # Response Generation
         response = self.agents["ResponseGeneration"].run(selected_data)
 
         # Supervision & Refinement
@@ -117,7 +117,7 @@ def run_pipeline(index, dataset, embedding_model, user_prompt):
 
 if __name__ == "__main__":
     print(
-        "Hello! I’m your AI-powered podcast recommendation agent. 🎧\n"
+        "Hello! I’m your AI-powered podcast recommendation agent.\n"
         "I specialize in finding the best podcasts tailored to your interests. "
         "Just tell me what you're looking for—whether it’s about tech, business, health, or any topic—and I'll curate the perfect list for you. "
         "I also consider factors like your available time and specific preferences to provide the best experience.\n"
