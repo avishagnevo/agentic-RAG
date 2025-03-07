@@ -2,7 +2,7 @@
 
 ![logo](assets/logo.png)
 
-**<p style="text-align:center;">The best AI assistant for podcast recommendations in the world.</p>**
+**<p style="text-align:center;">The noval AI assistant for podcast recommendations.</p>**
 
 <p style="text-align:center;">A RAG AI agent which the user can ask for podcast recommendations. The AI agent will extract podcast shows or specific episodes, from a collected database, based on user request while taking into account his needs such as limited available time.</p>
 
@@ -54,7 +54,8 @@ We've created an index in our dataset that stores the embedding vector for each 
 
 **Requirements:** 
 * Our code was built and tested on python3.11, which makes it the preferable version (However it might work on others, but will require changing package versions)
-* Must have a `.env` file which should be added to the projects directory. The containts of this file should be the `Azure OpenAI api key` and it should be written as such:
+* Must have a `.env` file which should be added to the projects directory. Note that some frameworks might require additional steps to read the `.env` file, if you encounter any issues you can hard code the API key in the `llms.py` file under the `AZURE_OPENAI_API_KEY` variable.
+* The contains of this file should be the `Azure OpenAI api key` and it should be written as such:
 ```.env
 API_KEY="your-secret-api-key"
 ```

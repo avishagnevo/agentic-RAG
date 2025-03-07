@@ -10,6 +10,7 @@ class AgenticPipeline:
     Manages the structured execution of AI agents to process user queries and retrieve relevant podcast recommendations.
     """
     def __init__(self, index, dataset, embedding_model):
+        print("Connecting to our database...")
         self.index = index
         self.dataset = dataset
         self.embedding_model = embedding_model
@@ -33,6 +34,7 @@ class AgenticPipeline:
         """
 
         # Database Selection
+        print("Checking if the input is valid and safe...")
         query_pass = self.agents["QueryInitialCheck"].run(user_query)
         query_pass_dict = utils.check_query_pass(query_pass)
 
@@ -42,14 +44,17 @@ class AgenticPipeline:
 
 
         # Index Filters Extraction
+        print("Extracting search filters from the input...")
         search_filters = self.agents["SearchFilters"].run(user_query)
         search_filters = utils.check_search_filters(search_filters)
 
         # Summarization of User Needs
+        print("Summarizing user needs...")
         needs_summary = self.agents["NeedUnderstanding"].run(user_query)
 
         # Semantic Search using Pinecone, get 3 times the recommendation amount to account for filtering
         # search_filters["Pinecone Format"] is a dictionary that contains the filters in the format required by Pinecone
+        print("Searching for relevant podcasts...")
         query_embedding = self.embedding_model.get_query_embedding(needs_summary)
         search_results = self.index.retrieve_data(query_embedding, top_k=3 * search_filters["recommendation_amount"],
                                                   filters=search_filters["Pinecone Format"])
@@ -69,6 +74,7 @@ class AgenticPipeline:
             "needs_summary": needs_summary
         }
 
+        print("Selecting the best podcasts based on your preferences...")
         podcast_selection = self.agents["Selector"].run(augmented_prompt)
         selected_ids = utils.check_selector_output(podcast_selection, search_results, search_filters)
 
@@ -92,6 +98,7 @@ class AgenticPipeline:
                 selected_data.append(entry)
 
         # Response Generation
+        print("Generating your recommendations final response...")
         response = self.agents["ResponseGeneration"].run(selected_data)
 
         # Supervision & Refinement
